@@ -1,0 +1,50 @@
+@page{
+  size:Letter;
+  margin:0;
+}
+
+@media print{
+  body *{
+    visibility:hidden;
+  }
+
+  .canvas-wrap,
+  .canvas-wrap *{
+    visibility:visible;
+  }
+
+  .topbar,
+  .panel,
+  .add-scene,
+  .scene-hover,
+  .page-meta{
+    display:none !important;
+  }
+
+  .workspace{
+    display:block;
+    padding:0;
+  }
+
+  .canvas-wrap{
+    display:block;
+    overflow:visible;
+  }
+
+  .page-shell{
+    padding:0;
+    box-shadow:none;
+    background:transparent;
+    break-after:page;
+  }
+
+  .page{
+    box-shadow:none;
+    margin:0;
+    min-height:11in;
+    padding-top:.75in;
+    padding-right:1in;
+    padding-bottom:1in;
+    padding-left:1.25in;
+  }
+}
