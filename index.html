@@ -1,65 +1,54 @@
 <!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Script Maker for Creative Dummies</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="stylesheet" href="print.css" media="print" />
-</head>
-<body>
-  <header class="topbar">
-    <div>
+Script Maker for Creative Dummies
       <strong>Script Maker for Creative Dummies</strong><br />
-      <small>Editor visual sobre página de guion</small>
+      <small>Editor visual de guiones</small>
     </div>
 
     <div class="toolbar">
-      <button onclick="newDocument()">Nuevo</button>
+      <button onclick="handleNewScript()">Nuevo</button>
+      <button onclick="openLibraryModal()">Mis guiones</button>
+      <button onclick="openProjectModal()">Proyecto</button>
       <button id="writingModeBtn" class="toggle-off" onclick="toggleWritingMode()">Modo escritura: OFF</button>
       <span id="writingModeHelp" class="writing-mode-help">
         Modo normal: el modal no recentra el bloque activo.
       </span>
+      <button onclick="exportCurrentScriptJSON()">Exportar JSON</button>
       <button onclick="exportTXT()">Exportar TXT</button>
       <button onclick="window.print()">PDF</button>
     </div>
-  </header>
 
-  <main class="workspace">
-    <section class="panel">
-      <h3>Escenas</h3>
-      <p class="muted">Numeración automática y acceso rápido.</p>
-      <div id="sceneList"></div>
-      <button class="primary" onclick="openSceneModal('new')">+ Agregar escena</button>
-    </section>
+Escenas
+Numeración automática y acceso rápido.
+Cargando…
 
-    <section class="canvas-wrap">
-      <div id="pagesContainer"></div>
-    </section>
+-   Agregar escena
 
-    <section class="panel">
-      <h3>Glosario</h3>
-      <p class="muted">Lista completa de abreviaturas para aprender.</p>
-      <div id="glossary"></div>
-    </section>
-  </main>
+    Glosario
+    Tus guiones se guardan localmente en este navegador. Exporta una
+    copia de seguridad desde “Mis guiones”.
 
-  <div id="modal" class="modal-overlay">
-    <div class="modal">
-      <h2 id="modalTitle">Editar escena</h2>
-      <div id="modalBody"></div>
-
-      <div class="modal-actions">
-        <span class="muted">Cada campo incluye guías y sugerencias contextuales.</span>
-        <div>
-          <button onclick="closeModal()">Cancelar</button>
-          <button class="primary" onclick="saveScene()">Guardar escena</button>
+        <h2>Mis guiones</h2>
+        <div class="modal-toolbar">
+          <button class="primary" onclick="handleNewScript()">+ Nuevo guion</button>
+          <button onclick="exportLibraryJSON()">Exportar biblioteca</button>
+          <button onclick="document.getElementById('importLibraryInput').click()">Importar biblioteca</button>
+          <input id="importLibraryInput" type="file" accept=".json,application/json" hidden />
         </div>
-      </div>
-    </div>
-  </div>
+        <div id="libraryList" class="library-list"></div>
+        <div class="modal-actions">
+          <button onclick="closeLibraryModal()">Cerrar</button>
+        </div>
 
-  <script src="data.js"></script>
-  <script src="app.js"></script>
-</body>
-</html>
+        <h2 id="projectModalTitle">Proyecto</h2>
+        <div id="projectModalBody"></div>
+        <div class="modal-actions">
+          <button onclick="closeProjectModal()">Cancelar</button>
+          <button class="primary" onclick="saveProjectModal()">Guardar</button>
+        </div>
+
+        <h2 id="sceneModalTitle">Editar escena</h2>
+        <div id="sceneModalBody"></div>
+        <div class="modal-actions">
+          <button onclick="closeSceneModal()">Cancelar</button>
+          <button class="primary" onclick="saveSceneModal()">Guardar escena</button>
+        </div>
