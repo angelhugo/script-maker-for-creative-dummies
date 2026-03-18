@@ -1,1098 +1,364 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Script Maker for Creative Dummies</title>
-  <style>
-    :root {
-      --bg: #e5e7eb;
-      --panel: #ffffff;
-      --border: #d1d5db;
-      --text: #111827;
-      --muted: #6b7280;
-      --accent: #111827;
-      --soft: #f9fafb;
-      --hover: #eef2ff;
-      --danger: #b91c1c;
-      --paper-shadow: 0 18px 40px rgba(0,0,0,.16);
-    }
-
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-    }
-
-    button, input, textarea, select { font: inherit; }
-
-    button {
-      border: 1px solid var(--border);
-      background: white;
-      color: var(--text);
-      padding: 10px 14px;
-      border-radius: 12px;
-      cursor: pointer;
-    }
-
-    button:hover { background: #f3f4f6; }
-    button.primary { background: var(--accent); color: white; border-color: var(--accent); }
-    button.danger { color: var(--danger); border-color: #fecaca; background: #fff5f5; }
-    button.small { padding: 7px 10px; font-size: 12px; }
-
-    .topbar {
-      position: sticky;
-      top: 0;
-      z-index: 30;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-      padding: 16px 20px;
-      background: rgba(17,24,39,.96);
-      color: white;
-      border-bottom: 1px solid rgba(255,255,255,.08);
-      backdrop-filter: blur(10px);
-    }
-
-    .brand h1 {
-      margin: 0;
-      font-size: 24px;
-      line-height: 1.1;
-    }
-
-    .brand p {
-      margin: 4px 0 0;
-      font-size: 13px;
-      color: #d1d5db;
-    }
-
-    .toolbar {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-
-    .workspace {
-      display: grid;
-      grid-template-columns: 260px minmax(640px, 1fr) 300px;
-      gap: 18px;
-      padding: 18px;
-      align-items: start;
-    }
-
-    .panel {
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      overflow: hidden;
-      box-shadow: 0 2px 6px rgba(0,0,0,.05);
-    }
-
-    .panel-header {
-      padding: 16px;
-      border-bottom: 1px solid var(--border);
-      background: var(--soft);
-    }
-
-    .panel-header h2 {
-      margin: 0 0 6px;
-      font-size: 18px;
-    }
-
-    .panel-header p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.4;
-    }
-
-    .panel-body { padding: 16px; }
-
-    .scene-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-
-    .scene-item {
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 12px;
-      background: white;
-      cursor: pointer;
-    }
-
-    .scene-item.active {
-      background: var(--hover);
-      border-color: #a5b4fc;
-    }
-
-    .scene-item-title {
-      font-size: 14px;
-      font-weight: bold;
-      margin-bottom: 4px;
-    }
-
-    .scene-item-meta {
-      font-size: 12px;
-      color: var(--muted);
-      margin-bottom: 8px;
-    }
-
-    .scene-item-actions {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-
-    .canvas-wrap {
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      padding: 8px 0 24px;
-    }
-
-    .page-frame {
-      width: min(8.5in, 100%);
-      background: white;
-      border-radius: 6px;
-      box-shadow: var(--paper-shadow);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .page-topbar {
-      padding: 12px 18px;
-      border-bottom: 1px solid #e5e7eb;
-      background: #fafafa;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .page-topbar .meta {
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    .page {
-      min-height: 11in;
-      padding-top: 1in;
-      padding-right: 1in;
-      padding-bottom: 1in;
-      padding-left: 1.5in;
-      background: white;
-    }
-
-    .page-content {
-      font-family: "Courier New", Courier, monospace;
-      font-size: 12pt;
-      line-height: 1.2;
-      color: black;
-      min-height: calc(11in - 2in);
-    }
-
-    .scene-block {
-      position: relative;
-      margin-bottom: 0.3in;
-      border-radius: 8px;
-      transition: background .15s ease, outline .15s ease, box-shadow .15s ease;
-      outline: 2px solid transparent;
-    }
-
-    .scene-block:hover {
-      background: rgba(99,102,241,.06);
-      outline-color: rgba(99,102,241,.22);
-      box-shadow: inset 0 0 0 1px rgba(99,102,241,.12);
-    }
-
-    .scene-hoverbar {
-      position: absolute;
-      right: -0.8in;
-      top: 0;
-      display: none;
-      gap: 6px;
-      flex-direction: column;
-      z-index: 3;
-    }
-
-    .scene-block:hover .scene-hoverbar {
-      display: flex;
-    }
-
-    .hover-pill {
-      border: 1px solid #c7d2fe;
-      background: white;
-      color: #3730a3;
-      font-size: 11px;
-      padding: 7px 10px;
-      border-radius: 999px;
-      box-shadow: 0 4px 10px rgba(0,0,0,.08);
-      white-space: nowrap;
-    }
-
-    .script-line {
-      white-space: pre-wrap;
-      margin-bottom: 0.12in;
-    }
-
-    .sp-heading, .sp-character, .sp-transition { text-transform: uppercase; }
-    .sp-heading { width: 6in; font-weight: bold; }
-    .sp-description, .sp-action { width: 6in; }
-    .sp-character { margin-left: 2.2in; width: 2.3in; }
-    .sp-parenthetical { margin-left: 1.7in; width: 3in; }
-    .sp-dialogue { margin-left: 1.2in; width: 3.5in; }
-    .sp-transition { margin-left: 4.3in; width: 1.7in; text-align: right; }
-
-    .add-scene-zone {
-      border: 2px dashed #cbd5e1;
-      border-radius: 16px;
-      padding: 18px;
-      text-align: center;
-      color: var(--muted);
-      background: #fafafa;
-      margin-top: 0.15in;
-    }
-
-    .search-input {
-      width: 100%;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 10px 12px;
-      margin-bottom: 12px;
-    }
-
-    .glossary-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      max-height: calc(100vh - 240px);
-      overflow: auto;
-      padding-right: 4px;
-    }
-
-    .glossary-item {
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 12px;
-      background: white;
-    }
-
-    .glossary-item h4 {
-      margin: 0 0 6px;
-      font-size: 14px;
-    }
-
-    .glossary-item p {
-      margin: 0 0 6px;
-      font-size: 12px;
-      line-height: 1.45;
-      color: var(--muted);
-    }
-
-    .meta {
-      font-size: 11px;
-      letter-spacing: .04em;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
-
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-      background: rgba(17,24,39,.72);
-      z-index: 50;
-      backdrop-filter: blur(6px);
-    }
-
-    .modal {
-      width: min(940px, 100%);
-      max-height: calc(100vh - 48px);
-      background: white;
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: 0 18px 50px rgba(0,0,0,.22);
-      display: flex;
-      flex-direction: column;
-    }
-
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 12px;
-      padding: 18px 20px;
-      border-bottom: 1px solid var(--border);
-      background: var(--soft);
-    }
-
-    .modal-header h3 {
-      margin: 0 0 6px;
-      font-size: 20px;
-    }
-
-    .modal-header p {
-      margin: 0;
-      font-size: 13px;
-      color: var(--muted);
-      line-height: 1.45;
-    }
-
-    .modal-body {
-      padding: 20px;
-      overflow: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-    }
-
-    .stack { display: flex; flex-direction: column; gap: 12px; }
-    .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-
-    .section-title {
-      margin: 0;
-      font-size: 14px;
-      font-weight: bold;
-    }
-
-    .help-text {
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.45;
-      margin: 0;
-    }
-
-    .field, .textarea, .select {
-      width: 100%;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 11px 12px;
-      background: white;
-    }
-
-    .textarea {
-      min-height: 96px;
-      resize: vertical;
-      line-height: 1.5;
-    }
-
-    .heading-grid {
-      display: grid;
-      grid-template-columns: 150px 1fr 180px;
-      gap: 10px;
-    }
-
-    .generated-heading {
-      background: var(--soft);
-      border: 1px dashed var(--border);
-      border-radius: 14px;
-      padding: 12px;
-      font-weight: bold;
-      text-transform: uppercase;
-      letter-spacing: .02em;
-    }
-
-    .block-card {
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 14px;
-      background: white;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .block-top {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      align-items: flex-start;
-    }
-
-    .block-top h4 {
-      margin: 0 0 4px;
-      font-size: 15px;
-    }
-
-    .block-top p {
-      margin: 0;
-      font-size: 12px;
-      color: var(--muted);
-      line-height: 1.4;
-    }
-
-    .block-actions {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-
-    .abbr-help {
-      display: grid;
-      gap: 6px;
-      padding: 10px;
-      border-radius: 12px;
-      background: var(--soft);
-      border: 1px solid var(--border);
-    }
-
-    .abbr-help-item {
-      font-size: 12px;
-      line-height: 1.45;
-    }
-
-    .abbr-help-item strong {
-      display: inline-block;
-      min-width: 76px;
-    }
-
-    .add-blocks {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .modal-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      padding: 16px 20px;
-      border-top: 1px solid var(--border);
-      background: white;
-    }
-
-    .modal-footer .left,
-    .modal-footer .right {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-
-    @media (max-width: 1320px) {
-      .workspace { grid-template-columns: 1fr; }
-      .glossary-list { max-height: none; }
-      .scene-hoverbar {
-        right: 0;
-        top: -36px;
-        flex-direction: row;
-      }
-    }
-
-    @media (max-width: 920px) {
-      .heading-grid { grid-template-columns: 1fr; }
-      .page {
-        min-height: auto;
-        padding: 32px 24px;
-      }
-      .topbar { position: static; }
-      .modal { max-height: calc(100vh - 24px); }
-      .modal-overlay { padding: 12px; }
-    }
-
-    @media print {
-      body * { visibility: hidden; }
-      #paperPane, #paperPane * { visibility: visible; }
-      .workspace, .page-frame, .page { box-shadow: none !important; }
-      .topbar, .panel, .scene-hoverbar, .add-scene-zone { display: none !important; }
-      #paperPane {
-        position: absolute;
-        inset: 0;
-        display: block !important;
-        background: white;
-      }
-      .page {
-        margin: 0;
-        padding-top: 1in;
-        padding-right: 1in;
-        padding-bottom: 1in;
-        padding-left: 1.5in;
-      }
-      .scene-block:hover { background: transparent; outline: none; box-shadow: none; }
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Script Maker for Creative Dummies</title>
+<style>
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#e5e7eb}
+button,input,textarea,select{font:inherit}
+button{border:1px solid #d1d5db;background:white;padding:8px 12px;border-radius:10px;cursor:pointer}
+button:hover{background:#f3f4f6}
+button.primary{background:#111827;color:white;border-color:#111827}
+
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;background:#111827;color:white}
+.workspace{display:grid;grid-template-columns:240px 1fr 260px;gap:16px;padding:16px}
+.panel{background:white;border-radius:12px;border:1px solid #d1d5db;padding:14px}
+
+.canvas-wrap{display:flex;justify-content:center}
+.page{width:8.5in;background:white;min-height:11in;padding-top:1in;padding-right:1in;padding-bottom:1in;padding-left:1.5in;box-shadow:0 20px 40px rgba(0,0,0,.15)}
+.page-content{font-family:"Courier New",monospace;font-size:12pt;line-height:1.2}
+
+.script-line{margin-bottom:.12in;white-space:pre-wrap}
+.sp-heading{text-transform:uppercase;font-weight:bold}
+.sp-character{text-transform:uppercase;margin-left:2.2in}
+.sp-dialogue{margin-left:1.2in;width:3.5in}
+.sp-parenthetical{margin-left:1.7in}
+.sp-transition{text-transform:uppercase;text-align:right;margin-left:4in}
+
+.scene-block{position:relative;margin-bottom:.3in}
+.scene-block:hover{background:#eef2ff}
+
+.scene-hover{position:absolute;right:-120px;top:0;display:none;flex-direction:column;gap:6px}
+.scene-block:hover .scene-hover{display:flex}
+.scene-hover button{font-size:11px}
+
+.add-scene{border:2px dashed #cbd5e1;padding:14px;text-align:center;margin-top:10px;cursor:pointer}
+
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center}
+.modal{background:white;width:900px;max-height:90vh;overflow:auto;border-radius:14px;padding:20px}
+.section{margin-bottom:18px}
+.section-title{font-weight:bold;margin-bottom:6px}
+.help{font-size:12px;color:#6b7280;margin-bottom:8px}
+.block{border:1px solid #d1d5db;border-radius:10px;padding:10px;margin-bottom:10px}
+</style>
 </head>
 <body>
-  <header class="topbar">
-    <div class="brand">
-      <h1>Script Maker for Creative Dummies</h1>
-      <p>Vista principal sobre hoja real. Las escenas se editan en un lightbox.</p>
-    </div>
-    <div class="toolbar">
-      <button onclick="newDocument()">Nuevo guion</button>
-      <button onclick="openSceneModal('new')">Agregar escena</button>
-      <button onclick="exportTXT()">Exportar TXT</button>
-      <button onclick="window.print()">Imprimir / PDF</button>
-    </div>
-  </header>
 
-  <main class="workspace">
-    <section class="panel">
-      <div class="panel-header">
-        <h2>Escenas</h2>
-        <p>Índice rápido del documento. Puedes seleccionar, mover o eliminar escenas.</p>
-      </div>
-      <div class="panel-body">
-        <div id="sceneList" class="scene-list"></div>
-        <button class="primary" onclick="openSceneModal('new')">+ Nueva escena</button>
-      </div>
-    </section>
+<header class="topbar">
+<div>
+<strong>Script Maker for Creative Dummies</strong><br>
+<small>Editor visual sobre página de guion</small>
+</div>
+<div>
+<button onclick="newDocument()">Nuevo</button>
+<button onclick="openSceneModal('new')">Agregar escena</button>
+<button onclick="exportTXT()">Exportar TXT</button>
+<button onclick="window.print()">PDF</button>
+</div>
+</header>
 
-    <section id="paperPane" class="canvas-wrap">
-      <div class="page-frame">
-        <div class="page-topbar">
-          <div>
-            <strong id="docTitle">Untitled Script</strong>
-            <div class="meta">1 página ≈ 1 minuto de acción. La hoja es ahora la interfaz principal.</div>
-          </div>
-          <div class="meta" id="pageMeta">Vista de página 1</div>
-        </div>
-        <div class="page">
-          <div id="pageContent" class="page-content"></div>
-        </div>
-      </div>
-    </section>
+<main class="workspace">
 
-    <aside class="panel">
-      <div class="panel-header">
-        <h2>Glosario</h2>
-        <p>Términos en inglés, descripciones en español y bloque donde se usan.</p>
-      </div>
-      <div class="panel-body">
-        <input id="glossarySearch" class="search-input" placeholder="Buscar INT., V.O., CUT TO..." oninput="renderGlossary()" />
-        <div id="glossaryList" class="glossary-list"></div>
-      </div>
-    </aside>
-  </main>
+<section class="panel">
+<h3>Escenas</h3>
+<div id="sceneList"></div>
+<button class="primary" onclick="openSceneModal('new')">+ Nueva escena</button>
+</section>
 
-  <div id="sceneModalOverlay" class="modal-overlay">
-    <div class="modal">
-      <div class="modal-header">
-        <div>
-          <h3 id="modalTitle">Editar escena</h3>
-          <p>La escena se define por un encabezado, una descripción general y bloques internos. Los términos del guion aparecen solo en el bloque correspondiente.</p>
-        </div>
-        <button onclick="closeSceneModal()">Cerrar</button>
-      </div>
-      <div id="sceneModalBody" class="modal-body"></div>
-      <div class="modal-footer">
-        <div class="left">
-          <span class="meta">Los cambios se aplican al guardar la escena.</span>
-        </div>
-        <div class="right">
-          <button onclick="closeSceneModal()">Cancelar</button>
-          <button class="primary" onclick="saveSceneModal()">Guardar escena</button>
-        </div>
-      </div>
-    </div>
-  </div>
+<section class="canvas-wrap">
+<div class="page">
+<div id="pageContent" class="page-content"></div>
+</div>
+</section>
 
-  <script>
-    const GLOSSARY = [
-      { term: 'INT.', title: 'Interior', description: 'Indica que la escena ocurre dentro de un espacio cerrado.', block: 'Encabezado', example: 'INT. APARTMENT - NIGHT' },
-      { term: 'EXT.', title: 'Exterior', description: 'Indica que la escena ocurre en un espacio abierto o exterior.', block: 'Encabezado', example: 'EXT. CITY STREET - DAY' },
-      { term: 'INT./EXT.', title: 'Interior/Exterior', description: 'Indica que la escena se mueve entre interior y exterior.', block: 'Encabezado', example: 'INT./EXT. CAR - NIGHT' },
-      { term: '(V.O.)', title: 'Voice Over', description: 'Voz en off. El personaje habla, pero su voz no proviene del espacio físico de la escena.', block: 'Personaje', example: 'NARRATOR (V.O.)' },
-      { term: '(O.S.)', title: 'Off Screen', description: 'Fuera de pantalla. El personaje está presente en la escena, pero no aparece visible en el encuadre cuando habla.', block: 'Personaje', example: 'SARAH (O.S.)' },
-      { term: "(CONT'D)", title: 'Continued', description: 'Indica que el mismo personaje continúa hablando después de una interrupción o acción intermedia.', block: 'Personaje', example: "JOHN (CONT'D)" },
-      { term: 'FADE IN:', title: 'Inicio', description: 'Indica el comienzo del guion o de una secuencia importante.', block: 'Transición', example: 'FADE IN:' },
-      { term: 'CUT TO:', title: 'Corte directo', description: 'Transición directa entre una escena y la siguiente.', block: 'Transición', example: 'CUT TO:' },
-      { term: 'DISSOLVE TO:', title: 'Disolvencia', description: 'Transición suave en la que una escena se desvanece mientras aparece la siguiente.', block: 'Transición', example: 'DISSOLVE TO:' },
-      { term: 'SMASH CUT TO:', title: 'Corte abrupto', description: 'Cambio brusco de escena usado para generar sorpresa o impacto dramático.', block: 'Transición', example: 'SMASH CUT TO:' },
-      { term: 'FADE OUT.', title: 'Cierre', description: 'Indica el cierre de una escena o del guion completo.', block: 'Transición', example: 'FADE OUT.' },
-      { term: 'POV', title: 'Point of View', description: 'Indica que vemos la escena desde la perspectiva visual de un personaje.', block: 'Acción', example: 'POV — The door opens.' },
-      { term: 'SFX', title: 'Sound Effects', description: 'Indica efectos de sonido importantes dentro de la escena.', block: 'Acción', example: 'SFX: GLASS SHATTERS' },
-      { term: 'BG', title: 'Background', description: 'Sonido o acción que ocurre en el fondo de la escena.', block: 'Acción', example: 'BG: Traffic noise.' }
-    ];
+<section class="panel">
+<h3>Glosario</h3>
+<p style="font-size:12px;color:#6b7280">Lista completa de abreviaturas para aprender.</p>
+<div id="glossary"></div>
+</section>
 
-    const BLOCK_META = {
-      action: { label: 'Acción', description: 'Describe lo que se ve en pantalla.', placeholder: 'John walks into the room and closes the door.' },
-      character: { label: 'Personaje', description: 'Identifica quién habla.' },
-      dialogue: { label: 'Diálogo', description: 'Contiene lo que dice el personaje.', placeholder: 'I told you this would happen.' },
-      parenthetical: { label: 'Acotación', description: 'Indica cómo se dice una línea de diálogo.', placeholder: '(whispering)' },
-      transition: { label: 'Transición', description: 'Indica el cambio entre escenas.' }
-    };
+</main>
 
-    const HEADING_TYPES = ['INT.', 'EXT.', 'INT./EXT.'];
-    const TIMES = ['DAY', 'NIGHT', 'MORNING', 'EVENING', 'AFTERNOON', 'CONTINUOUS'];
-    const CHARACTER_SUFFIXES = ['', '(V.O.)', '(O.S.)', "(CONT'D)"];
-    const TRANSITIONS = ['FADE IN:', 'CUT TO:', 'DISSOLVE TO:', 'SMASH CUT TO:', 'FADE OUT.'];
+<div id="modal" class="modal-overlay">
+<div class="modal">
+<h2 id="modalTitle">Editar escena</h2>
+<div id="modalBody"></div>
+<div style="margin-top:12px">
+<button onclick="closeModal()">Cancelar</button>
+<button class="primary" onclick="saveScene()">Guardar escena</button>
+</div>
+</div>
+</div>
 
-    let state = { title: 'Untitled Script', scenes: [], selectedSceneId: null };
-    let modalState = { mode: 'edit', sceneId: null, draft: null };
+<script>
 
-    function uid() { return Math.random().toString(36).slice(2, 10); }
+const HEADING_TYPES=["INT.","EXT.","INT./EXT."]
+const TIMES=["DAY","NIGHT","MORNING","EVENING","CONTINUOUS"]
 
-    function createDefaultScene(number = 1) {
-      return {
-        id: uid(),
-        heading: {
-          type: number === 1 ? 'EXT.' : 'INT.',
-          location: number === 1 ? 'CITY STREET' : 'NEWSROOM',
-          time: number === 1 ? 'NIGHT' : 'DAY'
-        },
-        description: number === 1
-          ? 'The street is empty. A single car passes in the distance.'
-          : 'The newsroom is quiet. Only the sound of keyboards remains.',
-        blocks: number === 1
-          ? [
-              { id: uid(), type: 'action', text: 'John walks into the street and checks both corners.' },
-              { id: uid(), type: 'character', name: 'JOHN', suffix: '' },
-              { id: uid(), type: 'dialogue', text: 'I should not be here.' },
-              { id: uid(), type: 'character', name: 'SARAH', suffix: '(O.S.)' },
-              { id: uid(), type: 'dialogue', text: 'Then why did you come?' },
-              { id: uid(), type: 'transition', value: 'CUT TO:' }
-            ]
-          : [
-              { id: uid(), type: 'action', text: 'A blinking cursor waits on the screen.' },
-              { id: uid(), type: 'character', name: 'EDITOR', suffix: '' },
-              { id: uid(), type: 'dialogue', text: 'Give me page one before the coffee gets cold.' }
-            ]
-      };
-    }
+const CHARACTER_SUFFIXES=[
+{v:"",d:"sin sufijo"},
+{v:"(V.O.)",d:"voz en off"},
+{v:"(O.S.)",d:"fuera de pantalla"},
+{v:"(CONT'D)",d:"continúa hablando"}
+]
 
-    function clone(value) { return JSON.parse(JSON.stringify(value)); }
+const TRANSITIONS=[
+{v:"CUT TO:",d:"corte directo"},
+{v:"DISSOLVE TO:",d:"disolvencia"},
+{v:"SMASH CUT TO:",d:"corte abrupto"},
+{v:"FADE IN:",d:"inicio de guion"},
+{v:"FADE OUT.",d:"fin de guion"}
+]
 
-    function newDocument() {
-      state = {
-        title: 'Untitled Script',
-        scenes: [createDefaultScene(1), createDefaultScene(2)],
-        selectedSceneId: null
-      };
-      state.selectedSceneId = state.scenes[0].id;
-      closeSceneModal();
-      render();
-    }
+let state={scenes:[]}
+let modalScene=null
 
-    function headingToString(scene) {
-      const { type, location, time } = scene.heading;
-      const loc = (location || '').trim().toUpperCase();
-      const timeStr = (time || '').trim().toUpperCase();
-      const parts = [type, loc].filter(Boolean).join(' ');
-      return [parts, timeStr].filter(Boolean).join(' - ');
-    }
+function uid(){return Math.random().toString(36).slice(2)}
 
-    function buildCharacterLine(block) {
-      return [block.name || '', block.suffix || ''].filter(Boolean).join(' ');
-    }
+function newDocument(){
+state.scenes=[{
+id:uid(),
+heading:{type:"EXT.",location:"CITY STREET",time:"NIGHT"},
+description:"The street is empty.",
+blocks:[
+{id:uid(),type:"action",text:"John walks into the street."},
+{id:uid(),type:"character",name:"JOHN",suffix:""},
+{id:uid(),type:"dialogue",text:"I shouldn't be here."}
+]
+}]
+render()
+}
 
-    function renderSceneList() {
-      const el = document.getElementById('sceneList');
-      el.innerHTML = '';
-      state.scenes.forEach((scene, index) => {
-        const div = document.createElement('div');
-        div.className = 'scene-item' + (scene.id === state.selectedSceneId ? ' active' : '');
-        div.onclick = () => { state.selectedSceneId = scene.id; renderSceneList(); renderPaper(); };
-        div.innerHTML = `
-          <div class="scene-item-title">${index + 1}. ${escapeHtml(headingToString(scene) || 'UNTITLED SCENE')}</div>
-          <div class="scene-item-meta">${scene.blocks.length} bloques</div>
-        `;
+function headingString(s){
+return `${s.heading.type} ${s.heading.location} - ${s.heading.time}`
+}
 
-        const actions = document.createElement('div');
-        actions.className = 'scene-item-actions';
-        actions.appendChild(makeMiniButton('Editar', (e) => { e.stopPropagation(); openSceneModal('edit', scene.id); }));
-        actions.appendChild(makeMiniButton('↑', (e) => { e.stopPropagation(); moveScene(scene.id, -1); }));
-        actions.appendChild(makeMiniButton('↓', (e) => { e.stopPropagation(); moveScene(scene.id, 1); }));
-        actions.appendChild(makeMiniButton('Eliminar', (e) => { e.stopPropagation(); deleteScene(scene.id); }, 'danger'));
-        div.appendChild(actions);
-        el.appendChild(div);
-      });
-    }
+function render(){
+renderScenes()
+renderPaper()
+renderGlossary()
+}
 
-    function makeMiniButton(label, onClick, variant = '') {
-      const btn = document.createElement('button');
-      btn.className = 'small' + (variant ? ' ' + variant : '');
-      btn.textContent = label;
-      btn.onclick = onClick;
-      return btn;
-    }
+function renderScenes(){
+const el=document.getElementById("sceneList")
+el.innerHTML=""
+state.scenes.forEach((s,i)=>{
+const d=document.createElement("div")
+d.style.marginBottom="8px"
+d.innerHTML=`${i+1}. ${headingString(s)}`
+d.onclick=()=>openSceneModal("edit",s.id)
+el.appendChild(d)
+})
+}
 
-    function renderPaper() {
-      document.getElementById('docTitle').textContent = state.title;
-      document.getElementById('pageMeta').textContent = `1 página visible · ${state.scenes.length} escenas`;
-      const page = document.getElementById('pageContent');
-      page.innerHTML = '';
+function renderPaper(){
+const page=document.getElementById("pageContent")
+page.innerHTML=""
 
-      state.scenes.forEach((scene, index) => {
-        const wrap = document.createElement('div');
-        wrap.className = 'scene-block';
-        wrap.dataset.sceneId = scene.id;
+state.scenes.forEach((scene,i)=>{
+const wrap=document.createElement("div")
+wrap.className="scene-block"
 
-        const hoverbar = document.createElement('div');
-        hoverbar.className = 'scene-hoverbar';
-        hoverbar.appendChild(makeHoverPill('Editar escena', () => openSceneModal('edit', scene.id)));
-        hoverbar.appendChild(makeHoverPill('Eliminar', () => deleteScene(scene.id)));
-        wrap.appendChild(hoverbar);
+const hover=document.createElement("div")
+hover.className="scene-hover"
 
-        appendLine(wrap, headingToString(scene), 'sp-heading');
-        if (scene.description) appendLine(wrap, scene.description, 'sp-description');
+const edit=document.createElement("button")
+edit.textContent="Editar"
+edit.onclick=()=>openSceneModal("edit",scene.id)
 
-        scene.blocks.forEach(block => {
-          if (block.type === 'action') appendLine(wrap, block.text || '', 'sp-action');
-          if (block.type === 'character') appendLine(wrap, buildCharacterLine(block), 'sp-character');
-          if (block.type === 'dialogue') appendLine(wrap, block.text || '', 'sp-dialogue');
-          if (block.type === 'parenthetical') appendLine(wrap, block.text || '', 'sp-parenthetical');
-          if (block.type === 'transition') appendLine(wrap, block.value || '', 'sp-transition');
-        });
+hover.appendChild(edit)
+wrap.appendChild(hover)
 
-        if (index === state.scenes.length - 1) {
-          const addZone = document.createElement('div');
-          addZone.className = 'add-scene-zone';
-          addZone.innerHTML = `<div><strong>+ Agregar escena</strong></div><div class="meta" style="margin-top:8px;">Se abrirá un lightbox para editarla.</div>`;
-          addZone.onclick = () => openSceneModal('new');
-          wrap.appendChild(addZone);
-        }
+appendLine(wrap,headingString(scene),"sp-heading")
+appendLine(wrap,scene.description)
 
-        page.appendChild(wrap);
-      });
-    }
+scene.blocks.forEach(b=>{
+if(b.type==="action")appendLine(wrap,b.text)
+if(b.type==="character")appendLine(wrap,`${b.name} ${b.suffix}`,"sp-character")
+if(b.type==="dialogue")appendLine(wrap,b.text,"sp-dialogue")
+if(b.type==="parenthetical")appendLine(wrap,b.text,"sp-parenthetical")
+if(b.type==="transition")appendLine(wrap,b.value,"sp-transition")
+})
 
-    function appendLine(parent, text, klass) {
-      const line = document.createElement('div');
-      line.className = 'script-line ' + klass;
-      line.textContent = text;
-      parent.appendChild(line);
-    }
+if(i===state.scenes.length-1){
+const add=document.createElement("div")
+add.className="add-scene"
+add.innerHTML="+ Agregar escena"
+add.onclick=()=>openSceneModal("new")
+wrap.appendChild(add)
+}
 
-    function makeHoverPill(label, onClick) {
-      const btn = document.createElement('button');
-      btn.className = 'hover-pill';
-      btn.textContent = label;
-      btn.onclick = (e) => { e.stopPropagation(); onClick(); };
-      return btn;
-    }
+page.appendChild(wrap)
+})
+}
 
-    function moveScene(id, direction) {
-      const index = state.scenes.findIndex(s => s.id === id);
-      const nextIndex = index + direction;
-      if (index < 0 || nextIndex < 0 || nextIndex >= state.scenes.length) return;
-      const temp = state.scenes[index];
-      state.scenes[index] = state.scenes[nextIndex];
-      state.scenes[nextIndex] = temp;
-      render();
-    }
+function appendLine(parent,text,cls=""){
+const l=document.createElement("div")
+l.className="script-line "+cls
+l.textContent=text
+parent.appendChild(l)
+}
 
-    function deleteScene(id) {
-      if (state.scenes.length === 1) return;
-      const idx = state.scenes.findIndex(s => s.id === id);
-      state.scenes = state.scenes.filter(s => s.id !== id);
-      if (state.selectedSceneId === id) {
-        state.selectedSceneId = (state.scenes[Math.max(0, idx - 1)] || state.scenes[0]).id;
-      }
-      render();
-    }
+function openSceneModal(mode,id=null){
+modalScene=mode==="edit"?
+JSON.parse(JSON.stringify(state.scenes.find(s=>s.id===id))):
+{id:uid(),heading:{type:"INT.",location:"LOCATION",time:"DAY"},description:"",blocks:[]}
 
-    function openSceneModal(mode, sceneId = null) {
-      modalState.mode = mode;
-      modalState.sceneId = sceneId;
-      modalState.draft = mode === 'edit'
-        ? clone(state.scenes.find(s => s.id === sceneId))
-        : {
-            id: uid(),
-            heading: { type: 'INT.', location: 'NEW LOCATION', time: 'DAY' },
-            description: 'Describe the initial situation of the scene.',
-            blocks: [
-              { id: uid(), type: 'action', text: 'A new action begins here.' },
-              { id: uid(), type: 'character', name: 'CHARACTER', suffix: '' },
-              { id: uid(), type: 'dialogue', text: 'This is the first line of dialogue.' }
-            ]
-          };
-      document.getElementById('sceneModalOverlay').style.display = 'flex';
-      renderSceneModal();
-    }
+document.getElementById("modal").style.display="flex"
+renderModal()
+}
 
-    function closeSceneModal() {
-      document.getElementById('sceneModalOverlay').style.display = 'none';
-      modalState = { mode: 'edit', sceneId: null, draft: null };
-    }
+function closeModal(){document.getElementById("modal").style.display="none"}
 
-    function saveSceneModal() {
-      if (!modalState.draft) return;
-      if (modalState.mode === 'new') {
-        state.scenes.push(clone(modalState.draft));
-        state.selectedSceneId = modalState.draft.id;
-      } else {
-        const idx = state.scenes.findIndex(s => s.id === modalState.sceneId);
-        if (idx >= 0) state.scenes[idx] = clone(modalState.draft);
-        state.selectedSceneId = modalState.draft.id;
-      }
-      closeSceneModal();
-      render();
-    }
+function renderModal(){
+const body=document.getElementById("modalBody")
+body.innerHTML=""
 
-    function renderSceneModal() {
-      const draft = modalState.draft;
-      if (!draft) return;
+const h=document.createElement("div")
+h.className="section"
+h.innerHTML=`
+<div class="section-title">Encabezado</div>
+<div class="help">Define dónde y cuándo ocurre la escena.</div>
+<select id="mType"></select>
+<input id="mLoc" value="${modalScene.heading.location}">
+<select id="mTime"></select>
+`
+body.appendChild(h)
 
-      document.getElementById('modalTitle').textContent = modalState.mode === 'new' ? 'Agregar escena' : 'Editar escena';
-      const body = document.getElementById('sceneModalBody');
-      body.innerHTML = `
-        <div class="stack">
-          <div class="stack">
-            <div class="section-title">Encabezado</div>
-            <div class="heading-grid">
-              <select id="mHeadingType" class="select"></select>
-              <input id="mHeadingLocation" class="field" placeholder="LOCATION" value="${escapeHtml(draft.heading.location)}" />
-              <select id="mHeadingTime" class="select"></select>
-            </div>
-            <p class="help-text">Define dónde y cuándo ocurre la escena. Aquí sí pueden aparecer INT., EXT. o INT./EXT.</p>
-            <div class="generated-heading">${escapeHtml(headingToString(draft))}</div>
-          </div>
+const typeSel=h.querySelector("#mType")
+HEADING_TYPES.forEach(v=>{
+const o=document.createElement("option")
+o.value=v;o.textContent=v
+o.selected=v===modalScene.heading.type
+typeSel.appendChild(o)
+})
 
-          <div class="stack">
-            <div class="section-title">Descripción de escena</div>
-            <textarea id="mSceneDescription" class="textarea" placeholder="The room is silent. A lamp flickers in the corner.">${escapeHtml(draft.description)}</textarea>
-            <p class="help-text">Describe el ambiente o situación inicial de la escena.</p>
-          </div>
+const timeSel=h.querySelector("#mTime")
+TIMES.forEach(v=>{
+const o=document.createElement("option")
+o.value=v;o.textContent=v
+o.selected=v===modalScene.heading.time
+timeSel.appendChild(o)
+})
 
-          <div class="stack">
-            <div class="section-title">Bloques de la escena</div>
-            <div id="modalBlockList" class="stack"></div>
-            <div class="add-blocks">
-              <button onclick="modalAddBlock('action')">+ Acción</button>
-              <button onclick="modalAddBlock('character')">+ Personaje</button>
-              <button onclick="modalAddBlock('dialogue')">+ Diálogo</button>
-              <button onclick="modalAddBlock('parenthetical')">+ Acotación</button>
-              <button onclick="modalAddBlock('transition')">+ Transición</button>
-            </div>
-          </div>
-        </div>
-      `;
+const desc=document.createElement("div")
+desc.className="section"
+desc.innerHTML=`
+<div class="section-title">Descripción</div>
+<textarea id="mDesc" style="width:100%;height:80px">${modalScene.description}</textarea>
+`
+body.appendChild(desc)
 
-      const typeSelect = document.getElementById('mHeadingType');
-      HEADING_TYPES.forEach(opt => {
-        const option = document.createElement('option');
-        option.value = opt;
-        option.textContent = opt;
-        option.selected = draft.heading.type === opt;
-        typeSelect.appendChild(option);
-      });
-      typeSelect.onchange = (e) => { draft.heading.type = e.target.value; renderSceneModal(); };
+const blocks=document.createElement("div")
+blocks.className="section"
+blocks.innerHTML=`<div class="section-title">Bloques</div>`
 
-      const timeSelect = document.getElementById('mHeadingTime');
-      TIMES.forEach(opt => {
-        const option = document.createElement('option');
-        option.value = opt;
-        option.textContent = opt;
-        option.selected = draft.heading.time === opt;
-        timeSelect.appendChild(option);
-      });
-      timeSelect.onchange = (e) => { draft.heading.time = e.target.value; renderSceneModal(); };
+modalScene.blocks.forEach(b=>{
+const el=document.createElement("div")
+el.className="block"
 
-      document.getElementById('mHeadingLocation').oninput = (e) => { draft.heading.location = e.target.value.toUpperCase(); renderSceneModal(); };
-      document.getElementById('mSceneDescription').oninput = (e) => { draft.description = e.target.value; };
+if(b.type==="action"){
+el.innerHTML=`Acción<br><textarea style="width:100%">${b.text}</textarea>`
+}
 
-      const list = document.getElementById('modalBlockList');
-      draft.blocks.forEach((block, index) => list.appendChild(renderModalBlock(block, index, draft.blocks.length)));
-    }
+if(b.type==="character"){
+let opts=""
+CHARACTER_SUFFIXES.forEach(s=>{
+opts+=`<option value="${s.v}" ${b.suffix===s.v?"selected":""}>${s.v} — ${s.d}</option>`
+})
 
-    function renderModalBlock(block, index, total) {
-      const wrap = document.createElement('div');
-      wrap.className = 'block-card';
-      const meta = BLOCK_META[block.type];
+el.innerHTML=`
+Personaje<br>
+<input value="${b.name}"><br>
+<select>${opts}</select>
+`
+}
 
-      const top = document.createElement('div');
-      top.className = 'block-top';
-      top.innerHTML = `
-        <div>
-          <h4>${meta.label}</h4>
-          <p>${meta.description}</p>
-        </div>
-      `;
+if(b.type==="dialogue"){
+el.innerHTML=`Diálogo<br><textarea style="width:100%">${b.text}</textarea>`
+}
 
-      const actions = document.createElement('div');
-      actions.className = 'block-actions';
-      actions.appendChild(makeModalMiniButton('↑', () => modalMoveBlock(block.id, -1), index === 0));
-      actions.appendChild(makeModalMiniButton('↓', () => modalMoveBlock(block.id, 1), index === total - 1));
-      actions.appendChild(makeModalMiniButton('Eliminar', () => modalDeleteBlock(block.id), false, 'danger'));
-      top.appendChild(actions);
-      wrap.appendChild(top);
+if(b.type==="parenthetical"){
+el.innerHTML=`Acotación<br><textarea style="width:100%">${b.text}</textarea>`
+}
 
-      if (block.type === 'action') {
-        const ta = document.createElement('textarea');
-        ta.className = 'textarea';
-        ta.placeholder = meta.placeholder;
-        ta.value = block.text || '';
-        ta.oninput = (e) => { block.text = e.target.value; };
-        wrap.appendChild(ta);
-        wrap.appendChild(createGlossaryHelp(['POV', 'SFX', 'BG']));
-      }
+if(b.type==="transition"){
+let opts=""
+TRANSITIONS.forEach(t=>{
+opts+=`<option value="${t.v}">${t.v} — ${t.d}</option>`
+})
 
-      if (block.type === 'character') {
-        const row = document.createElement('div');
-        row.className = 'heading-grid';
-        row.style.gridTemplateColumns = '1fr 220px';
+el.innerHTML=`Transición<br><select>${opts}</select>`
+}
 
-        const input = document.createElement('input');
-        input.className = 'field';
-        input.placeholder = 'CHARACTER NAME';
-        input.value = block.name || '';
-        input.oninput = (e) => { block.name = e.target.value.toUpperCase(); };
+blocks.appendChild(el)
+})
 
-        const select = document.createElement('select');
-        select.className = 'select';
-        CHARACTER_SUFFIXES.forEach(opt => {
-          const option = document.createElement('option');
-          option.value = opt;
-          option.textContent = opt || 'none';
-          option.selected = (block.suffix || '') === opt;
-          select.appendChild(option);
-        });
-        select.onchange = (e) => { block.suffix = e.target.value; };
+const add=document.createElement("div")
+add.innerHTML=`
+<button onclick="addBlock('action')">+ Acción</button>
+<button onclick="addBlock('character')">+ Personaje</button>
+<button onclick="addBlock('dialogue')">+ Diálogo</button>
+<button onclick="addBlock('parenthetical')">+ Acotación</button>
+<button onclick="addBlock('transition')">+ Transición</button>
+`
+blocks.appendChild(add)
 
-        row.appendChild(input);
-        row.appendChild(select);
-        wrap.appendChild(row);
-        wrap.appendChild(createGlossaryHelp(['(V.O.)', '(O.S.)', "(CONT'D)"]));
-      }
+body.appendChild(blocks)
+}
 
-      if (block.type === 'dialogue' || block.type === 'parenthetical') {
-        const ta = document.createElement('textarea');
-        ta.className = 'textarea';
-        ta.placeholder = meta.placeholder;
-        ta.style.minHeight = block.type === 'parenthetical' ? '72px' : '110px';
-        ta.value = block.text || '';
-        ta.oninput = (e) => { block.text = e.target.value; };
-        wrap.appendChild(ta);
-      }
+function addBlock(type){
+const b={id:uid(),type:type}
+if(type==="action"||type==="dialogue"||type==="parenthetical")b.text=""
+if(type==="character"){b.name="CHARACTER";b.suffix=""}
+if(type==="transition")b.value="CUT TO:"
+modalScene.blocks.push(b)
+renderModal()
+}
 
-      if (block.type === 'transition') {
-        const select = document.createElement('select');
-        select.className = 'select';
-        TRANSITIONS.forEach(opt => {
-          const option = document.createElement('option');
-          option.value = opt;
-          option.textContent = opt;
-          option.selected = block.value === opt;
-          select.appendChild(option);
-        });
-        select.onchange = (e) => { block.value = e.target.value; };
-        wrap.appendChild(select);
-        wrap.appendChild(createGlossaryHelp(['FADE IN:', 'CUT TO:', 'DISSOLVE TO:', 'SMASH CUT TO:', 'FADE OUT.']));
-      }
+function saveScene(){
+const existing=state.scenes.findIndex(s=>s.id===modalScene.id)
+if(existing>=0)state.scenes[existing]=modalScene
+else state.scenes.push(modalScene)
+closeModal()
+render()
+}
 
-      return wrap;
-    }
+function renderGlossary(){
+const g=document.getElementById("glossary")
+g.innerHTML=`
+INT. — interior<br>
+EXT. — exterior<br>
+(V.O.) — voz en off<br>
+(O.S.) — fuera de pantalla<br>
+CUT TO — corte directo
+`
+}
 
-    function makeModalMiniButton(label, onClick, disabled = false, variant = '') {
-      const btn = document.createElement('button');
-      btn.className = 'small' + (variant ? ' ' + variant : '');
-      btn.textContent = label;
-      btn.disabled = disabled;
-      btn.onclick = onClick;
-      return btn;
-    }
+function exportTXT(){
+let out=""
+state.scenes.forEach(s=>{
+out+=headingString(s)+"\n\n"
+out+=s.description+"\n\n"
+s.blocks.forEach(b=>{
+if(b.type==="action")out+=b.text+"\n"
+if(b.type==="character")out+=`${b.name} ${b.suffix}\n`
+if(b.type==="dialogue")out+=b.text+"\n"
+if(b.type==="transition")out+=b.value+"\n"
+})
+out+="\n"
+})
 
-    function modalAddBlock(type) {
-      const block = { id: uid(), type };
-      if (type === 'action' || type === 'dialogue' || type === 'parenthetical') block.text = BLOCK_META[type].placeholder || '';
-      if (type === 'character') { block.name = 'CHARACTER'; block.suffix = ''; }
-      if (type === 'transition') block.value = 'CUT TO:';
-      modalState.draft.blocks.push(block);
-      renderSceneModal();
-    }
+const blob=new Blob([out])
+const a=document.createElement("a")
+a.href=URL.createObjectURL(blob)
+a.download="script.txt"
+a.click()
+}
 
-    function modalDeleteBlock(id) {
-      modalState.draft.blocks = modalState.draft.blocks.filter(b => b.id !== id);
-      renderSceneModal();
-    }
+newDocument()
 
-    function modalMoveBlock(id, direction) {
-      const blocks = modalState.draft.blocks;
-      const index = blocks.findIndex(b => b.id === id);
-      const nextIndex = index + direction;
-      if (index < 0 || nextIndex < 0 || nextIndex >= blocks.length) return;
-      const temp = blocks[index];
-      blocks[index] = blocks[nextIndex];
-      blocks[nextIndex] = temp;
-      renderSceneModal();
-    }
-
-    function createGlossaryHelp(terms) {
-      const box = document.createElement('div');
-      box.className = 'abbr-help';
-      terms.forEach(term => {
-        const item = GLOSSARY.find(g => g.term === term);
-        if (!item) return;
-        const row = document.createElement('div');
-        row.className = 'abbr-help-item';
-        row.innerHTML = `<strong>${escapeHtml(item.term)}</strong> ${escapeHtml(item.description)}`;
-        box.appendChild(row);
-      });
-      return box;
-    }
-
-    function renderGlossary() {
-      const q = (document.getElementById('glossarySearch').value || '').trim().toLowerCase();
-      const el = document.getElementById('glossaryList');
-      el.innerHTML = '';
-      GLOSSARY
-        .filter(item => (`${item.term} ${item.title} ${item.description} ${item.block} ${item.example}`).toLowerCase().includes(q))
-        .forEach(item => {
-          const div = document.createElement('div');
-          div.className = 'glossary-item';
-          div.innerHTML = `
-            <h4>${escapeHtml(item.term)} <span class="meta">${escapeHtml(item.title)}</span></h4>
-            <p>${escapeHtml(item.description)}</p>
-            <p><strong>Bloque:</strong> ${escapeHtml(item.block)}</p>
-            <p><strong>Ejemplo:</strong> ${escapeHtml(item.example)}</p>
-          `;
-          el.appendChild(div);
-        });
-    }
-
-    function exportTXT() {
-      let output = '';
-      state.scenes.forEach(scene => {
-        output += headingToString(scene) + '\n\n';
-        if (scene.description) output += scene.description + '\n\n';
-        scene.blocks.forEach(block => {
-          if (block.type === 'action') output += (block.text || '') + '\n\n';
-          if (block.type === 'character') output += buildCharacterLine(block) + '\n\n';
-          if (block.type === 'dialogue') output += (block.text || '') + '\n\n';
-          if (block.type === 'parenthetical') output += (block.text || '') + '\n\n';
-          if (block.type === 'transition') output += (block.value || '') + '\n\n';
-        });
-        output += '\n';
-      });
-      const blob = new Blob([output], { type: 'text/plain;charset=utf-8' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'script-maker-export.txt';
-      a.click();
-      URL.revokeObjectURL(url);
-    }
-
-    function escapeHtml(value) {
-      return String(value ?? '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
-    }
-
-    function render() {
-      renderSceneList();
-      renderPaper();
-      renderGlossary();
-    }
-
-    newDocument();
-  </script>
+</script>
 </body>
 </html>
