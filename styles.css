@@ -157,6 +157,20 @@ button.toggle-off{background:#fff;color:#111827}
   align-items:center;
   text-align:center;
   padding:0 40px;
+  position:relative;
+  cursor:pointer;
+}
+
+.title-page:hover{
+  background:#fafafa;
+}
+
+.title-page-actions{
+  position:absolute;
+  top:0;
+  right:0;
+  display:flex;
+  gap:8px;
 }
 
 .title-page .title{
