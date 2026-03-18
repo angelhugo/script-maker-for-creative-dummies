@@ -40,6 +40,7 @@ function headingString(scene) {
 
 function collectCharacterNames(excludeBlockId = null) {
   const names = [];
+
   state.scenes.forEach(scene => {
     scene.blocks.forEach(block => {
       if (block.type === "character" && block.name && block.id !== excludeBlockId && !names.includes(block.name)) {
@@ -47,6 +48,7 @@ function collectCharacterNames(excludeBlockId = null) {
       }
     });
   });
+
   if (modalScene) {
     modalScene.blocks.forEach(block => {
       if (block.type === "character" && block.name && block.id !== excludeBlockId && !names.includes(block.name)) {
@@ -54,13 +56,19 @@ function collectCharacterNames(excludeBlockId = null) {
       }
     });
   }
+
   return names.sort();
 }
 
 function estimateSceneLines(scene) {
   let lines = 0;
+
   lines += 2;
-  if (scene.description) lines += Math.max(1, Math.ceil(scene.description.length / 65)) + 1;
+
+  if (scene.description) {
+    lines += Math.max(1, Math.ceil(scene.description.length / 65)) + 1;
+  }
+
   scene.blocks.forEach(block => {
     if (block.type === "action") lines += Math.max(1, Math.ceil((block.text || "").length / 65)) + 1;
     if (block.type === "character") lines += 1;
@@ -68,6 +76,7 @@ function estimateSceneLines(scene) {
     if (block.type === "parenthetical") lines += Math.max(1, Math.ceil((block.text || "").length / 32)) + 1;
     if (block.type === "transition") lines += 1;
   });
+
   lines += 1;
   return lines;
 }
@@ -80,16 +89,19 @@ function paginateScenes() {
 
   state.scenes.forEach((scene, idx) => {
     const needed = estimateSceneLines(scene);
+
     if (current.length && currentLines + needed > maxLines) {
       pages.push(current);
       current = [];
       currentLines = 0;
     }
+
     current.push({ scene, sceneNumber: idx + 1 });
     currentLines += needed;
   });
 
   if (current.length) pages.push(current);
+
   return pages;
 }
 
@@ -102,8 +114,14 @@ function render() {
 
 function renderWritingModeButton() {
   const btn = document.getElementById("writingModeBtn");
+  const help = document.getElementById("writingModeHelp");
+
   btn.textContent = `Modo escritura: ${state.writingMode ? "ON" : "OFF"}`;
   btn.className = state.writingMode ? "toggle-on" : "toggle-off";
+
+  help.textContent = state.writingMode
+    ? "Modo escritura: el bloque activo del modal se recentra y se resalta."
+    : "Modo normal: el modal no recentra el bloque activo.";
 }
 
 function toggleWritingMode() {
@@ -142,7 +160,9 @@ function miniBtn(label, fn) {
 function moveScene(id, dir) {
   const i = state.scenes.findIndex(scene => scene.id === id);
   const j = i + dir;
+
   if (i < 0 || j < 0 || j >= state.scenes.length) return;
+
   [state.scenes[i], state.scenes[j]] = [state.scenes[j], state.scenes[i]];
   render();
 }
@@ -156,6 +176,7 @@ function deleteScene(id) {
 function renderPages() {
   const container = document.getElementById("pagesContainer");
   container.innerHTML = "";
+
   const pages = paginateScenes();
 
   pages.forEach((pageScenes, pageIndex) => {
@@ -217,6 +238,7 @@ function renderPages() {
 
 function appendLine(parent, text, cls = "") {
   if (text === undefined || text === null) return;
+
   const line = document.createElement("div");
   line.className = "script-line " + cls;
   line.textContent = text;
@@ -254,7 +276,7 @@ function renderModal() {
     <div class="help">Define dónde y cuándo ocurre la escena.</div>
     <div class="grid3">
       <select id="mType"></select>
-      <input id="mLoc" class="field" placeholder="Escribe el lugar de la escena en inglés (ej: APARTMENT, CITY STREET)" value="${escapeHtml(modalScene.heading.location)}">
+      <input id="mLoc" class="field" placeholder="Escribe el lugar de la escena (ej: APARTMENT, CITY STREET)" value="${escapeHtml(modalScene.heading.location)}">
       <select id="mTime"></select>
     </div>
     <div class="inline-help"><strong>Ejemplo:</strong> EXT. CITY STREET - NIGHT</div>
@@ -269,7 +291,10 @@ function renderModal() {
     option.selected = v === modalScene.heading.type;
     typeSel.appendChild(option);
   });
-  typeSel.onchange = e => modalScene.heading.type = e.target.value;
+  typeSel.onchange = e => {
+    modalScene.heading.type = e.target.value;
+    maybeTypewriter(e.target);
+  };
 
   const timeSel = headingSection.querySelector("#mTime");
   TIMES.forEach(v => {
@@ -279,16 +304,22 @@ function renderModal() {
     option.selected = v === modalScene.heading.time;
     timeSel.appendChild(option);
   });
-  timeSel.onchange = e => modalScene.heading.time = e.target.value;
+  timeSel.onchange = e => {
+    modalScene.heading.time = e.target.value;
+    maybeTypewriter(e.target);
+  };
 
-  headingSection.querySelector("#mLoc").oninput = e => modalScene.heading.location = e.target.value.toUpperCase();
+  headingSection.querySelector("#mLoc").oninput = e => {
+    modalScene.heading.location = e.target.value.toUpperCase();
+    maybeTypewriter(e.target);
+  };
 
   const descSection = document.createElement("div");
   descSection.className = "section";
   descSection.innerHTML = `
     <div class="section-title">Descripción</div>
     <div class="help">Describe el ambiente inicial. Solo lo que se puede ver u oír.</div>
-    <textarea id="mDesc" placeholder="Describe en inglés el ambiente o situación inicial de la escena.">${escapeHtml(modalScene.description)}</textarea>
+    <textarea id="mDesc" placeholder="Describe el ambiente o situación inicial de la escena.">${escapeHtml(modalScene.description)}</textarea>
   `;
   descSection.querySelector("#mDesc").oninput = e => {
     modalScene.description = e.target.value;
@@ -303,7 +334,9 @@ function renderModal() {
     <div class="help">Agrega acciones, personajes, diálogos, acotaciones y transiciones.</div>
   `;
 
-  modalScene.blocks.forEach((block, index) => blocksSection.appendChild(renderBlock(block, index)));
+  modalScene.blocks.forEach((block, index) => {
+    blocksSection.appendChild(renderBlock(block, index));
+  });
 
   const add = document.createElement("div");
   add.innerHTML = `
@@ -314,6 +347,7 @@ function renderModal() {
     <button onclick="addBlock('transition')">+ Transición</button>
   `;
   blocksSection.appendChild(add);
+
   body.appendChild(blocksSection);
 }
 
@@ -343,7 +377,7 @@ function renderBlock(block, index) {
 
   if (block.type === "action") {
     el.innerHTML += `
-      <textarea placeholder="Describe en inglés lo que ocurre en pantalla. Ej: John opens the door and steps inside.">${escapeHtml(block.text || "")}</textarea>
+      <textarea placeholder="Describe lo que ocurre en pantalla. Ej: John opens the door and steps inside.">${escapeHtml(block.text || "")}</textarea>
       <div class="inline-help"><strong>Tip:</strong> escribe solo lo visible. No pensamientos internos.</div>
     `;
     const textarea = el.querySelector("textarea");
@@ -359,7 +393,7 @@ function renderBlock(block, index) {
     const sugId = "g" + uid();
 
     el.innerHTML += `
-      <input id="${nameId}" class="field" placeholder="Escribe el nombre del personaje en inglés (ej: JOHN, SARAH)" value="${escapeHtml(block.name || "")}">
+      <input id="${nameId}" class="field" placeholder="Escribe el nombre del personaje (ej: JOHN, SARAH)" value="${escapeHtml(block.name || "")}">
       <select id="${selId}"></select>
       <div class="inline-help">Opciones contextualizadas: solo aparecen sufijos válidos para personaje.</div>
       <div id="${sugId}" class="suggestions"></div>
@@ -383,7 +417,9 @@ function renderBlock(block, index) {
       option.selected = opt.v === (block.suffix || "");
       sel.appendChild(option);
     });
-    sel.onchange = e => block.suffix = e.target.value;
+    sel.onchange = e => {
+      block.suffix = e.target.value;
+    };
 
     renderCharacterSuggestions(sugId, block.id, block.name, selected => {
       block.name = selected;
@@ -393,7 +429,7 @@ function renderBlock(block, index) {
 
   if (block.type === "dialogue") {
     el.innerHTML += `
-      <textarea placeholder="Escribe en inglés lo que dice el personaje. Ej: I shouldn't be here.">${escapeHtml(block.text || "")}</textarea>
+      <textarea placeholder="Escribe lo que dice el personaje. Ej: I shouldn't be here.">${escapeHtml(block.text || "")}</textarea>
       <div class="inline-help"><strong>Ejemplo:</strong> I told you this would happen.</div>
     `;
     const textarea = el.querySelector("textarea");
@@ -405,7 +441,7 @@ function renderBlock(block, index) {
 
   if (block.type === "parenthetical") {
     el.innerHTML += `
-      <textarea placeholder="Escribe una acotación breve en inglés. Ej: (whispering), (angry)">${escapeHtml(block.text || "")}</textarea>
+      <textarea placeholder="Escribe una acotación breve. Ej: (whispering), (angry)">${escapeHtml(block.text || "")}</textarea>
       <div class="inline-help"><strong>Tip:</strong> úsala con moderación y solo para indicar cómo se dice la línea.</div>
     `;
     const textarea = el.querySelector("textarea");
@@ -429,7 +465,9 @@ function renderBlock(block, index) {
       option.selected = opt.v === (block.value || "");
       sel.appendChild(option);
     });
-    sel.onchange = e => block.value = e.target.value;
+    sel.onchange = e => {
+      block.value = e.target.value;
+    };
   }
 
   return el;
@@ -458,6 +496,7 @@ function helpFor(type) {
 function renderCharacterSuggestions(containerId, excludeBlockId, currentValue, onSelect) {
   const box = document.getElementById(containerId);
   if (!box) return;
+
   box.innerHTML = "";
 
   const names = collectCharacterNames(excludeBlockId)
@@ -478,12 +517,20 @@ function renderCharacterSuggestions(containerId, excludeBlockId, currentValue, o
 
 function addBlock(type) {
   const block = { id: uid(), type };
-  if (type === "action" || type === "dialogue" || type === "parenthetical") block.text = "";
+
+  if (type === "action" || type === "dialogue" || type === "parenthetical") {
+    block.text = "";
+  }
+
   if (type === "character") {
     block.name = "";
     block.suffix = "";
   }
-  if (type === "transition") block.value = "CUT TO:";
+
+  if (type === "transition") {
+    block.value = "CUT TO:";
+  }
+
   modalScene.blocks.push(block);
   renderModal();
 }
@@ -502,8 +549,13 @@ function deleteModalBlock(index) {
 
 function saveScene() {
   const idx = state.scenes.findIndex(scene => scene.id === modalScene.id);
-  if (idx >= 0) state.scenes[idx] = clone(modalScene);
-  else state.scenes.push(clone(modalScene));
+
+  if (idx >= 0) {
+    state.scenes[idx] = clone(modalScene);
+  } else {
+    state.scenes.push(clone(modalScene));
+  }
+
   closeModal();
   render();
 }
@@ -511,6 +563,7 @@ function saveScene() {
 function renderGlossary() {
   const g = document.getElementById("glossary");
   g.innerHTML = "";
+
   GLOSSARY.forEach(item => {
     const d = document.createElement("div");
     d.className = "g-item";
@@ -521,9 +574,11 @@ function renderGlossary() {
 
 function exportTXT() {
   let out = "";
+
   state.scenes.forEach((scene, i) => {
     out += `${i + 1}. ${headingString(scene)}\n\n`;
     out += (scene.description || "") + "\n\n";
+
     scene.blocks.forEach(block => {
       if (block.type === "action") out += (block.text || "") + "\n";
       if (block.type === "character") out += ([block.name, block.suffix].filter(Boolean).join(" ")) + "\n";
@@ -531,6 +586,7 @@ function exportTXT() {
       if (block.type === "parenthetical") out += (block.text || "") + "\n";
       if (block.type === "transition") out += (block.value || "") + "\n";
     });
+
     out += "\n";
   });
 
@@ -542,9 +598,18 @@ function exportTXT() {
 }
 
 function maybeTypewriter(element) {
+  document.querySelectorAll(".writing-active").forEach(el => el.classList.remove("writing-active"));
+
   if (!state.writingMode || !element) return;
+
+  const target = element.closest(".block") || element.closest(".section") || element;
+
+  if (target && target.classList) {
+    target.classList.add("writing-active");
+  }
+
   requestAnimationFrame(() => {
-    element.scrollIntoView({ block: "center", behavior: "smooth" });
+    target.scrollIntoView({ block: "center", behavior: "smooth" });
   });
 }
 
@@ -553,7 +618,7 @@ function escapeHtml(value) {
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
-    .replace(/\"/g, "&quot;")
+    .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
 }
 
