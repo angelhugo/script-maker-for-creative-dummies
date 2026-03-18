@@ -80,6 +80,7 @@ function headingString(scene) {
 function collectCharacterNames(excludeBlockId = null) {
   const names = [];
   if (!appState.currentScript) return names;
+
   appState.currentScript.scenes.forEach(scene => {
     scene.blocks.forEach(block => {
       if (block.type === "character" && block.name && block.id !== excludeBlockId && !names.includes(block.name)) {
@@ -87,6 +88,7 @@ function collectCharacterNames(excludeBlockId = null) {
       }
     });
   });
+
   if (sceneDraft) {
     sceneDraft.blocks.forEach(block => {
       if (block.type === "character" && block.name && block.id !== excludeBlockId && !names.includes(block.name)) {
@@ -94,6 +96,7 @@ function collectCharacterNames(excludeBlockId = null) {
       }
     });
   }
+
   return names.sort();
 }
 
@@ -116,6 +119,7 @@ function paginateScenes() {
   const pages = [];
   let current = [];
   let currentLines = 0;
+
   appState.currentScript.scenes.forEach((scene, idx) => {
     const needed = estimateSceneLines(scene);
     if (current.length && currentLines + needed > maxLines) {
@@ -126,6 +130,7 @@ function paginateScenes() {
     current.push({ scene, sceneNumber: idx + 1 });
     currentLines += needed;
   });
+
   if (current.length) pages.push(current);
   return pages;
 }
@@ -159,21 +164,50 @@ function renderTitlePage(container) {
 
   const titlePage = document.createElement("div");
   titlePage.className = "title-page";
+  titlePage.onclick = () => openProjectModal();
+
+  const actions = document.createElement("div");
+  actions.className = "title-page-actions";
+
+  const editBtn = document.createElement("button");
+  editBtn.className = "small";
+  editBtn.textContent = "Editar carátula";
+  editBtn.onclick = (e) => {
+    e.stopPropagation();
+    openProjectModal();
+  };
+
+  actions.appendChild(editBtn);
+  titlePage.appendChild(actions);
 
   const p = appState.currentScript.project;
 
-  titlePage.innerHTML = `
-    <div class="title">${escapeHtml(p.title || "UNTITLED PROJECT")}</div>
-    <div class="byline">por</div>
-    <div class="author">${escapeHtml(p.author || "Autor sin definir")}</div>
-    <div class="meta">
-      ${p.basedOn ? `Basado en: ${escapeHtml(p.basedOn)}<br>` : ""}
-      ${p.version ? `Versión: ${escapeHtml(p.version)}<br>` : ""}
-      ${p.date ? `Fecha: ${escapeHtml(p.date)}<br>` : ""}
-      ${p.contact ? `Contacto: ${escapeHtml(p.contact)}<br>` : ""}
-      ${p.notes ? `<br>${escapeHtml(p.notes)}` : ""}
-    </div>
+  const title = document.createElement("div");
+  title.className = "title";
+  title.textContent = p.title || "UNTITLED PROJECT";
+
+  const byline = document.createElement("div");
+  byline.className = "byline";
+  byline.textContent = "por";
+
+  const author = document.createElement("div");
+  author.className = "author";
+  author.textContent = p.author || "Autor sin definir";
+
+  const metaBox = document.createElement("div");
+  metaBox.className = "meta";
+  metaBox.innerHTML = `
+    ${p.basedOn ? `Basado en: ${escapeHtml(p.basedOn)}<br>` : ""}
+    ${p.version ? `Versión: ${escapeHtml(p.version)}<br>` : ""}
+    ${p.date ? `Fecha: ${escapeHtml(p.date)}<br>` : ""}
+    ${p.contact ? `Contacto: ${escapeHtml(p.contact)}<br>` : ""}
+    ${p.notes ? `<br>${escapeHtml(p.notes)}` : ""}
   `;
+
+  titlePage.appendChild(title);
+  titlePage.appendChild(byline);
+  titlePage.appendChild(author);
+  titlePage.appendChild(metaBox);
 
   page.appendChild(titlePage);
   shell.appendChild(meta);
@@ -381,7 +415,6 @@ function renderCharacterSuggestions(containerId, excludeBlockId, currentValue, o
   const box = document.getElementById(containerId);
   if (!box) return;
   box.innerHTML = "";
-
   const names = collectCharacterNames(excludeBlockId)
     .filter(name => !currentValue || name.includes(currentValue.toUpperCase()))
     .slice(0, 6);
@@ -426,6 +459,7 @@ function renderSceneBlock(block, index) {
     textarea.value = block.text || "";
     textarea.oninput = e => { block.text = e.target.value; maybeTypewriter(e.target); };
     el.appendChild(textarea);
+
     const tip = document.createElement("div");
     tip.className = "inline-help";
     tip.innerHTML = "<strong>Tip:</strong> escribe solo lo visible. No pensamientos internos.";
@@ -482,6 +516,7 @@ function renderSceneBlock(block, index) {
     textarea.value = block.text || "";
     textarea.oninput = e => { block.text = e.target.value; maybeTypewriter(e.target); };
     el.appendChild(textarea);
+
     const tip = document.createElement("div");
     tip.className = "inline-help";
     tip.innerHTML = "<strong>Ejemplo:</strong> I told you this would happen.";
@@ -494,6 +529,7 @@ function renderSceneBlock(block, index) {
     textarea.value = block.text || "";
     textarea.oninput = e => { block.text = e.target.value; maybeTypewriter(e.target); };
     el.appendChild(textarea);
+
     const tip = document.createElement("div");
     tip.className = "inline-help";
     tip.innerHTML = "<strong>Tip:</strong> úsala con moderación y solo para indicar cómo se dice la línea.";
@@ -636,6 +672,7 @@ async function saveSceneModal() {
   const idx = appState.currentScript.scenes.findIndex(scene => scene.id === sceneDraft.id);
   if (idx >= 0) appState.currentScript.scenes[idx] = clone(sceneDraft);
   else appState.currentScript.scenes.push(clone(sceneDraft));
+
   closeSceneModal();
   renderApp();
   scheduleAutosave();
@@ -671,6 +708,7 @@ async function renderLibraryList() {
         Última edición: ${new Date(script.updatedAt).toLocaleString()}
       </div>
     `;
+
     const actions = document.createElement("div");
     actions.className = "library-item-actions";
     actions.appendChild(miniBtn("Abrir", () => openScript(script.id)));
@@ -716,11 +754,13 @@ async function removeScript(id) {
 async function duplicateScript(id) {
   const original = await getScript(id);
   if (!original) return;
+
   const copy = structuredClone(original);
   copy.id = crypto.randomUUID();
   copy.project.version = copy.project.version ? `${copy.project.version} (copy)` : "Copy";
   copy.updatedAt = new Date().toISOString();
   copy.createdAt = copy.createdAt || copy.updatedAt;
+
   await putScript(copy);
   await renderLibraryList();
 }
@@ -747,6 +787,7 @@ async function exportLibraryJSON() {
     exportedAt: new Date().toISOString(),
     scripts
   };
+
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
@@ -757,6 +798,7 @@ async function exportLibraryJSON() {
 async function importLibraryJSON(file) {
   const text = await file.text();
   const payload = JSON.parse(text);
+
   if (!payload || !Array.isArray(payload.scripts)) {
     alert("El archivo no parece una biblioteca válida.");
     return;
@@ -769,6 +811,7 @@ async function importLibraryJSON(file) {
   const scripts = await getAllScripts();
   appState.currentScript = scripts[0] || createNewScriptShell();
   if (!scripts.length) await putScript(appState.currentScript);
+
   renderApp();
   await renderLibraryList();
 }
@@ -777,8 +820,10 @@ function exportTXT() {
   if (!appState.currentScript) return;
   let out = "";
   const p = appState.currentScript.project;
+
   out += `${p.title || "UNTITLED PROJECT"}\n`;
   out += `${p.author ? "por " + p.author : ""}\n\n`;
+
   appState.currentScript.scenes.forEach((scene, i) => {
     out += `${i + 1}. ${headingString(scene)}\n\n`;
     out += (scene.description || "") + "\n\n";
@@ -791,6 +836,7 @@ function exportTXT() {
     });
     out += "\n";
   });
+
   const blob = new Blob([out], { type: "text/plain;charset=utf-8" });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
@@ -809,6 +855,7 @@ async function bootstrap() {
   try {
     await openDB();
     const scripts = await getAllScripts();
+
     if (scripts.length) {
       appState.currentScript = scripts[0];
       renderApp();
