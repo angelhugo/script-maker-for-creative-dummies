@@ -171,6 +171,7 @@ function renderTitlePage(container) {
 
   const editBtn = document.createElement("button");
   editBtn.className = "small";
+  editBtn.type = "button";
   editBtn.textContent = "Editar carátula";
   editBtn.onclick = (e) => {
     e.stopPropagation();
@@ -178,7 +179,6 @@ function renderTitlePage(container) {
   };
 
   actions.appendChild(editBtn);
-  titlePage.appendChild(actions);
 
   const p = appState.currentScript.project;
 
@@ -204,6 +204,7 @@ function renderTitlePage(container) {
     ${p.notes ? `<br>${escapeHtml(p.notes)}` : ""}
   `;
 
+  titlePage.appendChild(actions);
   titlePage.appendChild(title);
   titlePage.appendChild(byline);
   titlePage.appendChild(author);
