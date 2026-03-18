@@ -6,15 +6,16 @@
   <title>Script Maker for Creative Dummies</title>
   <style>
     :root {
-      --bg: #f3f4f6;
+      --bg: #e5e7eb;
       --panel: #ffffff;
       --border: #d1d5db;
       --text: #111827;
       --muted: #6b7280;
       --accent: #111827;
       --soft: #f9fafb;
-      --selected: #e5e7eb;
+      --hover: #eef2ff;
       --danger: #b91c1c;
+      --paper-shadow: 0 18px 40px rgba(0,0,0,.16);
     }
 
     * { box-sizing: border-box; }
@@ -26,29 +27,47 @@
       color: var(--text);
     }
 
+    button, input, textarea, select { font: inherit; }
+
+    button {
+      border: 1px solid var(--border);
+      background: white;
+      color: var(--text);
+      padding: 10px 14px;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+
+    button:hover { background: #f3f4f6; }
+    button.primary { background: var(--accent); color: white; border-color: var(--accent); }
+    button.danger { color: var(--danger); border-color: #fecaca; background: #fff5f5; }
+    button.small { padding: 7px 10px; font-size: 12px; }
+
     .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
       display: flex;
       justify-content: space-between;
       align-items: center;
       gap: 16px;
       padding: 16px 20px;
-      background: #111;
+      background: rgba(17,24,39,.96);
       color: white;
-      border-bottom: 1px solid #000;
-      position: sticky;
-      top: 0;
-      z-index: 20;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      backdrop-filter: blur(10px);
     }
 
     .brand h1 {
       margin: 0;
       font-size: 24px;
+      line-height: 1.1;
     }
 
     .brand p {
       margin: 4px 0 0;
-      color: #d1d5db;
       font-size: 13px;
+      color: #d1d5db;
     }
 
     .toolbar {
@@ -58,50 +77,20 @@
       align-items: center;
     }
 
-    button, select, input, textarea {
-      font: inherit;
-    }
-
-    button, .button-like {
-      border: 1px solid var(--border);
-      background: white;
-      color: var(--text);
-      padding: 10px 12px;
-      border-radius: 10px;
-      cursor: pointer;
-    }
-
-    button.primary {
-      background: var(--accent);
-      color: white;
-      border-color: var(--accent);
-    }
-
-    button.danger {
-      color: var(--danger);
-      border-color: #fecaca;
-      background: #fff5f5;
-    }
-
-    button.small {
-      padding: 6px 10px;
-      font-size: 12px;
-    }
-
-    .layout {
+    .workspace {
       display: grid;
-      grid-template-columns: 280px minmax(500px, 1fr) 340px;
-      gap: 16px;
-      padding: 16px;
+      grid-template-columns: 260px minmax(640px, 1fr) 300px;
+      gap: 18px;
+      padding: 18px;
       align-items: start;
     }
 
     .panel {
-      background: var(--panel);
+      background: white;
       border: 1px solid var(--border);
-      border-radius: 16px;
+      border-radius: 18px;
       overflow: hidden;
-      box-shadow: 0 1px 3px rgba(0,0,0,.04);
+      box-shadow: 0 2px 6px rgba(0,0,0,.05);
     }
 
     .panel-header {
@@ -122,170 +111,177 @@
       line-height: 1.4;
     }
 
-    .panel-body {
-      padding: 16px;
-    }
+    .panel-body { padding: 16px; }
 
     .scene-list {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 10px;
       margin-bottom: 12px;
     }
 
     .scene-item {
       border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px;
       background: white;
-      border-radius: 12px;
-      padding: 10px 12px;
       cursor: pointer;
     }
 
-    .scene-item.selected {
-      background: var(--selected);
-      border-color: #9ca3af;
+    .scene-item.active {
+      background: var(--hover);
+      border-color: #a5b4fc;
     }
 
     .scene-item-title {
-      font-weight: bold;
       font-size: 14px;
+      font-weight: bold;
       margin-bottom: 4px;
     }
 
-    .scene-item-subtitle {
-      color: var(--muted);
+    .scene-item-meta {
       font-size: 12px;
-    }
-
-    .section-title {
-      font-size: 14px;
-      font-weight: bold;
-      margin: 0 0 8px;
-    }
-
-    .help-text {
       color: var(--muted);
-      font-size: 12px;
-      line-height: 1.4;
-      margin: 6px 0 0;
+      margin-bottom: 8px;
     }
 
-    .stack { display: flex; flex-direction: column; gap: 12px; }
-    .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-
-    .field,
-    .textarea,
-    .select {
-      width: 100%;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 10px 12px;
-      background: white;
-    }
-
-    .textarea {
-      min-height: 92px;
-      resize: vertical;
-      line-height: 1.5;
-    }
-
-    .heading-grid {
-      display: grid;
-      grid-template-columns: 140px 1fr 170px;
-      gap: 10px;
-    }
-
-    .generated-heading {
-      background: var(--soft);
-      border: 1px dashed var(--border);
-      border-radius: 12px;
-      padding: 12px;
-      font-weight: bold;
-      text-transform: uppercase;
-      letter-spacing: .02em;
-    }
-
-    .block {
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 14px;
-      background: white;
+    .scene-item-actions {
       display: flex;
-      flex-direction: column;
-      gap: 10px;
+      gap: 6px;
+      flex-wrap: wrap;
     }
 
-    .block-top {
+    .canvas-wrap {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 8px 0 24px;
+    }
+
+    .page-frame {
+      width: min(8.5in, 100%);
+      background: white;
+      border-radius: 6px;
+      box-shadow: var(--paper-shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .page-topbar {
+      padding: 12px 18px;
+      border-bottom: 1px solid #e5e7eb;
+      background: #fafafa;
       display: flex;
       justify-content: space-between;
+      align-items: center;
       gap: 10px;
-      align-items: flex-start;
+      flex-wrap: wrap;
     }
 
-    .block-top-left h4 {
-      margin: 0 0 4px;
-      font-size: 15px;
-    }
-
-    .block-top-left p {
-      margin: 0;
+    .page-topbar .meta {
       font-size: 12px;
       color: var(--muted);
-      line-height: 1.4;
     }
 
-    .abbr-help {
-      display: grid;
+    .page {
+      min-height: 11in;
+      padding-top: 1in;
+      padding-right: 1in;
+      padding-bottom: 1in;
+      padding-left: 1.5in;
+      background: white;
+    }
+
+    .page-content {
+      font-family: "Courier New", Courier, monospace;
+      font-size: 12pt;
+      line-height: 1.2;
+      color: black;
+      min-height: calc(11in - 2in);
+    }
+
+    .scene-block {
+      position: relative;
+      margin-bottom: 0.3in;
+      border-radius: 8px;
+      transition: background .15s ease, outline .15s ease, box-shadow .15s ease;
+      outline: 2px solid transparent;
+    }
+
+    .scene-block:hover {
+      background: rgba(99,102,241,.06);
+      outline-color: rgba(99,102,241,.22);
+      box-shadow: inset 0 0 0 1px rgba(99,102,241,.12);
+    }
+
+    .scene-hoverbar {
+      position: absolute;
+      right: -0.8in;
+      top: 0;
+      display: none;
       gap: 6px;
-      padding: 10px;
-      border-radius: 10px;
-      background: var(--soft);
-      border: 1px solid var(--border);
+      flex-direction: column;
+      z-index: 3;
     }
 
-    .abbr-help-item {
-      font-size: 12px;
-      line-height: 1.4;
-    }
-
-    .abbr-help-item strong {
-      display: inline-block;
-      min-width: 70px;
-    }
-
-    .block-actions {
+    .scene-block:hover .scene-hoverbar {
       display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
     }
 
-    .add-blocks {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 4px;
+    .hover-pill {
+      border: 1px solid #c7d2fe;
+      background: white;
+      color: #3730a3;
+      font-size: 11px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      box-shadow: 0 4px 10px rgba(0,0,0,.08);
+      white-space: nowrap;
+    }
+
+    .script-line {
+      white-space: pre-wrap;
+      margin-bottom: 0.12in;
+    }
+
+    .sp-heading, .sp-character, .sp-transition { text-transform: uppercase; }
+    .sp-heading { width: 6in; font-weight: bold; }
+    .sp-description, .sp-action { width: 6in; }
+    .sp-character { margin-left: 2.2in; width: 2.3in; }
+    .sp-parenthetical { margin-left: 1.7in; width: 3in; }
+    .sp-dialogue { margin-left: 1.2in; width: 3.5in; }
+    .sp-transition { margin-left: 4.3in; width: 1.7in; text-align: right; }
+
+    .add-scene-zone {
+      border: 2px dashed #cbd5e1;
+      border-radius: 16px;
+      padding: 18px;
+      text-align: center;
+      color: var(--muted);
+      background: #fafafa;
+      margin-top: 0.15in;
     }
 
     .search-input {
       width: 100%;
-      margin-bottom: 12px;
       border: 1px solid var(--border);
-      border-radius: 10px;
+      border-radius: 12px;
       padding: 10px 12px;
+      margin-bottom: 12px;
     }
 
     .glossary-list {
       display: flex;
       flex-direction: column;
       gap: 10px;
-      max-height: calc(100vh - 250px);
+      max-height: calc(100vh - 240px);
       overflow: auto;
       padding-right: 4px;
     }
 
     .glossary-item {
       border: 1px solid var(--border);
-      border-radius: 12px;
+      border-radius: 14px;
       padding: 12px;
       background: white;
     }
@@ -302,116 +298,230 @@
       color: var(--muted);
     }
 
-    .glossary-item .meta {
+    .meta {
       font-size: 11px;
+      letter-spacing: .04em;
       text-transform: uppercase;
       color: var(--muted);
-      letter-spacing: .04em;
     }
 
-    .preview-overlay {
+    .modal-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(17, 24, 39, 0.75);
       display: none;
       align-items: center;
       justify-content: center;
-      padding: 20px;
-      z-index: 40;
+      padding: 24px;
+      background: rgba(17,24,39,.72);
+      z-index: 50;
+      backdrop-filter: blur(6px);
     }
 
-    .preview-modal {
-      width: min(900px, 100%);
-      max-height: calc(100vh - 40px);
+    .modal {
+      width: min(940px, 100%);
+      max-height: calc(100vh - 48px);
       background: white;
-      border-radius: 16px;
+      border-radius: 20px;
       overflow: hidden;
+      box-shadow: 0 18px 50px rgba(0,0,0,.22);
       display: flex;
       flex-direction: column;
     }
 
-    .preview-header {
+    .modal-header {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      padding: 14px 16px;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 18px 20px;
       border-bottom: 1px solid var(--border);
       background: var(--soft);
     }
 
-    .preview-body {
+    .modal-header h3 {
+      margin: 0 0 6px;
+      font-size: 20px;
+    }
+
+    .modal-header p {
+      margin: 0;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .modal-body {
+      padding: 20px;
       overflow: auto;
-      padding: 24px;
-      background: #ddd;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
     }
 
-    .page {
-      width: 8.5in;
-      min-height: 11in;
-      margin: 0 auto;
+    .stack { display: flex; flex-direction: column; gap: 12px; }
+    .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+
+    .section-title {
+      margin: 0;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .help-text {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+      margin: 0;
+    }
+
+    .field, .textarea, .select {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 11px 12px;
       background: white;
-      box-shadow: 0 4px 12px rgba(0,0,0,.14);
-      padding-top: 1in;
-      padding-right: 1in;
-      padding-bottom: 1in;
-      padding-left: 1.5in;
     }
 
-    .script-preview {
-      font-family: "Courier New", Courier, monospace;
-      font-size: 12pt;
-      line-height: 1.2;
-      color: black;
+    .textarea {
+      min-height: 96px;
+      resize: vertical;
+      line-height: 1.5;
     }
 
-    .script-line {
-      white-space: pre-wrap;
-      margin-bottom: 0.12in;
+    .heading-grid {
+      display: grid;
+      grid-template-columns: 150px 1fr 180px;
+      gap: 10px;
     }
 
-    .sp-heading,
-    .sp-character,
-    .sp-transition,
-    .sp-suffix {
+    .generated-heading {
+      background: var(--soft);
+      border: 1px dashed var(--border);
+      border-radius: 14px;
+      padding: 12px;
+      font-weight: bold;
       text-transform: uppercase;
+      letter-spacing: .02em;
     }
 
-    .sp-heading { width: 6in; font-weight: bold; }
-    .sp-description, .sp-action { width: 6in; }
-    .sp-character { margin-left: 2.2in; width: 2.3in; }
-    .sp-parenthetical { margin-left: 1.7in; width: 3in; }
-    .sp-dialogue { margin-left: 1.2in; width: 3.5in; }
-    .sp-transition { margin-left: 4.3in; width: 1.7in; text-align: right; }
+    .block-card {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px;
+      background: white;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
 
-    @media (max-width: 1280px) {
-      .layout { grid-template-columns: 1fr; }
+    .block-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .block-top h4 {
+      margin: 0 0 4px;
+      font-size: 15px;
+    }
+
+    .block-top p {
+      margin: 0;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .block-actions {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .abbr-help {
+      display: grid;
+      gap: 6px;
+      padding: 10px;
+      border-radius: 12px;
+      background: var(--soft);
+      border: 1px solid var(--border);
+    }
+
+    .abbr-help-item {
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .abbr-help-item strong {
+      display: inline-block;
+      min-width: 76px;
+    }
+
+    .add-blocks {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 20px;
+      border-top: 1px solid var(--border);
+      background: white;
+    }
+
+    .modal-footer .left,
+    .modal-footer .right {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    @media (max-width: 1320px) {
+      .workspace { grid-template-columns: 1fr; }
       .glossary-list { max-height: none; }
+      .scene-hoverbar {
+        right: 0;
+        top: -36px;
+        flex-direction: row;
+      }
     }
 
-    @media (max-width: 820px) {
+    @media (max-width: 920px) {
       .heading-grid { grid-template-columns: 1fr; }
-      .topbar { position: static; }
       .page {
-        width: 100%;
         min-height: auto;
-        padding: 32px;
+        padding: 32px 24px;
       }
+      .topbar { position: static; }
+      .modal { max-height: calc(100vh - 24px); }
+      .modal-overlay { padding: 12px; }
     }
 
     @media print {
       body * { visibility: hidden; }
-      .preview-overlay, .preview-overlay * { visibility: visible; }
-      .preview-overlay {
-        position: static;
-        background: white;
+      #paperPane, #paperPane * { visibility: visible; }
+      .workspace, .page-frame, .page { box-shadow: none !important; }
+      .topbar, .panel, .scene-hoverbar, .add-scene-zone { display: none !important; }
+      #paperPane {
+        position: absolute;
+        inset: 0;
         display: block !important;
-        padding: 0;
+        background: white;
       }
-      .preview-modal { box-shadow: none; width: auto; max-height: none; }
-      .preview-header { display: none; }
-      .preview-body { background: white; padding: 0; }
-      .page { box-shadow: none; margin: 0; }
+      .page {
+        margin: 0;
+        padding-top: 1in;
+        padding-right: 1in;
+        padding-bottom: 1in;
+        padding-left: 1.5in;
+      }
+      .scene-block:hover { background: transparent; outline: none; box-shadow: none; }
     }
   </style>
 </head>
@@ -419,40 +529,47 @@
   <header class="topbar">
     <div class="brand">
       <h1>Script Maker for Creative Dummies</h1>
-      <p>Prototipo funcional para escribir guiones por escenas y bloques.</p>
+      <p>Vista principal sobre hoja real. Las escenas se editan en un lightbox.</p>
     </div>
     <div class="toolbar">
       <button onclick="newDocument()">Nuevo guion</button>
-      <button onclick="togglePreview(true)">Vista previa</button>
+      <button onclick="openSceneModal('new')">Agregar escena</button>
       <button onclick="exportTXT()">Exportar TXT</button>
       <button onclick="window.print()">Imprimir / PDF</button>
     </div>
   </header>
 
-  <main class="layout">
+  <main class="workspace">
     <section class="panel">
       <div class="panel-header">
         <h2>Escenas</h2>
-        <p>La escena es la unidad principal. Selecciona una o crea una nueva.</p>
+        <p>Índice rápido del documento. Puedes seleccionar, mover o eliminar escenas.</p>
       </div>
       <div class="panel-body">
         <div id="sceneList" class="scene-list"></div>
-        <button class="primary" onclick="addScene()">+ Nueva escena</button>
+        <button class="primary" onclick="openSceneModal('new')">+ Nueva escena</button>
       </div>
     </section>
 
-    <section class="panel">
-      <div class="panel-header">
-        <h2>Editor de escena</h2>
-        <p>Interfaz en español. Convenciones del guion en inglés y restringidas según el bloque.</p>
+    <section id="paperPane" class="canvas-wrap">
+      <div class="page-frame">
+        <div class="page-topbar">
+          <div>
+            <strong id="docTitle">Untitled Script</strong>
+            <div class="meta">1 página ≈ 1 minuto de acción. La hoja es ahora la interfaz principal.</div>
+          </div>
+          <div class="meta" id="pageMeta">Vista de página 1</div>
+        </div>
+        <div class="page">
+          <div id="pageContent" class="page-content"></div>
+        </div>
       </div>
-      <div id="editorBody" class="panel-body"></div>
     </section>
 
     <aside class="panel">
       <div class="panel-header">
         <h2>Glosario</h2>
-        <p>Términos en inglés, explicaciones en español y bloque donde se usan.</p>
+        <p>Términos en inglés, descripciones en español y bloque donde se usan.</p>
       </div>
       <div class="panel-body">
         <input id="glossarySearch" class="search-input" placeholder="Buscar INT., V.O., CUT TO..." oninput="renderGlossary()" />
@@ -461,18 +578,23 @@
     </aside>
   </main>
 
-  <div id="previewOverlay" class="preview-overlay">
-    <div class="preview-modal">
-      <div class="preview-header">
-        <strong>Vista previa del guion</strong>
-        <div class="toolbar">
-          <button onclick="window.print()">Imprimir / PDF</button>
-          <button class="primary" onclick="togglePreview(false)">Cerrar</button>
+  <div id="sceneModalOverlay" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <div>
+          <h3 id="modalTitle">Editar escena</h3>
+          <p>La escena se define por un encabezado, una descripción general y bloques internos. Los términos del guion aparecen solo en el bloque correspondiente.</p>
         </div>
+        <button onclick="closeSceneModal()">Cerrar</button>
       </div>
-      <div class="preview-body">
-        <div class="page">
-          <div id="scriptPreview" class="script-preview"></div>
+      <div id="sceneModalBody" class="modal-body"></div>
+      <div class="modal-footer">
+        <div class="left">
+          <span class="meta">Los cambios se aplican al guardar la escena.</span>
+        </div>
+        <div class="right">
+          <button onclick="closeSceneModal()">Cancelar</button>
+          <button class="primary" onclick="saveSceneModal()">Guardar escena</button>
         </div>
       </div>
     </div>
@@ -497,29 +619,11 @@
     ];
 
     const BLOCK_META = {
-      action: {
-        label: 'Acción',
-        description: 'Describe lo que se ve en pantalla.',
-        placeholder: 'John walks into the room and closes the door.',
-      },
-      character: {
-        label: 'Personaje',
-        description: 'Identifica quién habla.',
-      },
-      dialogue: {
-        label: 'Diálogo',
-        description: 'Contiene lo que dice el personaje.',
-        placeholder: 'I told you this would happen.',
-      },
-      parenthetical: {
-        label: 'Acotación',
-        description: 'Indica cómo se dice una línea de diálogo.',
-        placeholder: '(whispering)',
-      },
-      transition: {
-        label: 'Transición',
-        description: 'Indica el cambio entre escenas.',
-      }
+      action: { label: 'Acción', description: 'Describe lo que se ve en pantalla.', placeholder: 'John walks into the room and closes the door.' },
+      character: { label: 'Personaje', description: 'Identifica quién habla.' },
+      dialogue: { label: 'Diálogo', description: 'Contiene lo que dice el personaje.', placeholder: 'I told you this would happen.' },
+      parenthetical: { label: 'Acotación', description: 'Indica cómo se dice una línea de diálogo.', placeholder: '(whispering)' },
+      transition: { label: 'Transición', description: 'Indica el cambio entre escenas.' }
     };
 
     const HEADING_TYPES = ['INT.', 'EXT.', 'INT./EXT.'];
@@ -527,22 +631,17 @@
     const CHARACTER_SUFFIXES = ['', '(V.O.)', '(O.S.)', "(CONT'D)"];
     const TRANSITIONS = ['FADE IN:', 'CUT TO:', 'DISSOLVE TO:', 'SMASH CUT TO:', 'FADE OUT.'];
 
-    let state = {
-      title: 'Untitled Script',
-      selectedSceneId: null,
-      scenes: []
-    };
+    let state = { title: 'Untitled Script', scenes: [], selectedSceneId: null };
+    let modalState = { mode: 'edit', sceneId: null, draft: null };
 
-    function uid() {
-      return Math.random().toString(36).slice(2, 10);
-    }
+    function uid() { return Math.random().toString(36).slice(2, 10); }
 
     function createDefaultScene(number = 1) {
       return {
         id: uid(),
         heading: {
           type: number === 1 ? 'EXT.' : 'INT.',
-          location: number === 1 ? 'CITY STREET' : 'OFFICE',
+          location: number === 1 ? 'CITY STREET' : 'NEWSROOM',
           time: number === 1 ? 'NIGHT' : 'DAY'
         },
         description: number === 1
@@ -565,6 +664,8 @@
       };
     }
 
+    function clone(value) { return JSON.parse(JSON.stringify(value)); }
+
     function newDocument() {
       state = {
         title: 'Untitled Script',
@@ -572,103 +673,8 @@
         selectedSceneId: null
       };
       state.selectedSceneId = state.scenes[0].id;
+      closeSceneModal();
       render();
-    }
-
-    function addScene() {
-      const scene = createDefaultScene(state.scenes.length + 1);
-      state.scenes.push(scene);
-      state.selectedSceneId = scene.id;
-      render();
-    }
-
-    function getSelectedScene() {
-      return state.scenes.find(s => s.id === state.selectedSceneId) || null;
-    }
-
-    function deleteScene(id) {
-      if (state.scenes.length === 1) return;
-      const idx = state.scenes.findIndex(s => s.id === id);
-      state.scenes = state.scenes.filter(s => s.id !== id);
-      if (state.selectedSceneId === id) {
-        const fallback = state.scenes[Math.max(0, idx - 1)] || state.scenes[0];
-        state.selectedSceneId = fallback.id;
-      }
-      render();
-    }
-
-    function moveScene(id, direction) {
-      const index = state.scenes.findIndex(s => s.id === id);
-      if (index < 0) return;
-      const nextIndex = index + direction;
-      if (nextIndex < 0 || nextIndex >= state.scenes.length) return;
-      const temp = state.scenes[index];
-      state.scenes[index] = state.scenes[nextIndex];
-      state.scenes[nextIndex] = temp;
-      render();
-    }
-
-    function updateSceneHeading(field, value) {
-      const scene = getSelectedScene();
-      if (!scene) return;
-      scene.heading[field] = value;
-      renderSceneList();
-      renderEditor();
-      renderPreview();
-    }
-
-    function updateSceneDescription(value) {
-      const scene = getSelectedScene();
-      if (!scene) return;
-      scene.description = value;
-      renderEditor();
-      renderPreview();
-    }
-
-    function addBlock(type) {
-      const scene = getSelectedScene();
-      if (!scene) return;
-      const block = { id: uid(), type };
-      if (type === 'action' || type === 'dialogue' || type === 'parenthetical') block.text = BLOCK_META[type].placeholder || '';
-      if (type === 'character') {
-        block.name = 'JOHN';
-        block.suffix = '';
-      }
-      if (type === 'transition') block.value = 'CUT TO:';
-      scene.blocks.push(block);
-      renderEditor();
-      renderPreview();
-    }
-
-    function updateBlock(blockId, field, value) {
-      const scene = getSelectedScene();
-      if (!scene) return;
-      const block = scene.blocks.find(b => b.id === blockId);
-      if (!block) return;
-      block[field] = value;
-      renderEditor();
-      renderPreview();
-    }
-
-    function deleteBlock(blockId) {
-      const scene = getSelectedScene();
-      if (!scene) return;
-      scene.blocks = scene.blocks.filter(b => b.id !== blockId);
-      renderEditor();
-      renderPreview();
-    }
-
-    function moveBlock(blockId, direction) {
-      const scene = getSelectedScene();
-      if (!scene) return;
-      const index = scene.blocks.findIndex(b => b.id === blockId);
-      const nextIndex = index + direction;
-      if (index < 0 || nextIndex < 0 || nextIndex >= scene.blocks.length) return;
-      const temp = scene.blocks[index];
-      scene.blocks[index] = scene.blocks[nextIndex];
-      scene.blocks[nextIndex] = temp;
-      renderEditor();
-      renderPreview();
     }
 
     function headingToString(scene) {
@@ -679,161 +685,240 @@
       return [parts, timeStr].filter(Boolean).join(' - ');
     }
 
+    function buildCharacterLine(block) {
+      return [block.name || '', block.suffix || ''].filter(Boolean).join(' ');
+    }
+
     function renderSceneList() {
       const el = document.getElementById('sceneList');
       el.innerHTML = '';
       state.scenes.forEach((scene, index) => {
-        const item = document.createElement('div');
-        item.className = 'scene-item' + (scene.id === state.selectedSceneId ? ' selected' : '');
-        item.onclick = () => { state.selectedSceneId = scene.id; renderEditor(); renderSceneList(); };
-
-        const title = document.createElement('div');
-        title.className = 'scene-item-title';
-        title.textContent = `${index + 1}. ${headingToString(scene) || 'UNTITLED SCENE'}`;
-
-        const subtitle = document.createElement('div');
-        subtitle.className = 'scene-item-subtitle';
-        subtitle.textContent = `${scene.blocks.length} bloques`;
+        const div = document.createElement('div');
+        div.className = 'scene-item' + (scene.id === state.selectedSceneId ? ' active' : '');
+        div.onclick = () => { state.selectedSceneId = scene.id; renderSceneList(); renderPaper(); };
+        div.innerHTML = `
+          <div class="scene-item-title">${index + 1}. ${escapeHtml(headingToString(scene) || 'UNTITLED SCENE')}</div>
+          <div class="scene-item-meta">${scene.blocks.length} bloques</div>
+        `;
 
         const actions = document.createElement('div');
-        actions.className = 'row';
-        actions.style.marginTop = '8px';
-
-        const up = document.createElement('button');
-        up.className = 'small';
-        up.textContent = '↑';
-        up.onclick = (e) => { e.stopPropagation(); moveScene(scene.id, -1); };
-
-        const down = document.createElement('button');
-        down.className = 'small';
-        down.textContent = '↓';
-        down.onclick = (e) => { e.stopPropagation(); moveScene(scene.id, 1); };
-
-        const del = document.createElement('button');
-        del.className = 'small danger';
-        del.textContent = 'Eliminar';
-        del.onclick = (e) => { e.stopPropagation(); deleteScene(scene.id); };
-
-        actions.appendChild(up);
-        actions.appendChild(down);
-        actions.appendChild(del);
-
-        item.appendChild(title);
-        item.appendChild(subtitle);
-        item.appendChild(actions);
-        el.appendChild(item);
+        actions.className = 'scene-item-actions';
+        actions.appendChild(makeMiniButton('Editar', (e) => { e.stopPropagation(); openSceneModal('edit', scene.id); }));
+        actions.appendChild(makeMiniButton('↑', (e) => { e.stopPropagation(); moveScene(scene.id, -1); }));
+        actions.appendChild(makeMiniButton('↓', (e) => { e.stopPropagation(); moveScene(scene.id, 1); }));
+        actions.appendChild(makeMiniButton('Eliminar', (e) => { e.stopPropagation(); deleteScene(scene.id); }, 'danger'));
+        div.appendChild(actions);
+        el.appendChild(div);
       });
     }
 
-    function renderEditor() {
-      const el = document.getElementById('editorBody');
-      const scene = getSelectedScene();
-      if (!scene) {
-        el.innerHTML = '<p>No hay escena seleccionada.</p>';
-        return;
+    function makeMiniButton(label, onClick, variant = '') {
+      const btn = document.createElement('button');
+      btn.className = 'small' + (variant ? ' ' + variant : '');
+      btn.textContent = label;
+      btn.onclick = onClick;
+      return btn;
+    }
+
+    function renderPaper() {
+      document.getElementById('docTitle').textContent = state.title;
+      document.getElementById('pageMeta').textContent = `1 página visible · ${state.scenes.length} escenas`;
+      const page = document.getElementById('pageContent');
+      page.innerHTML = '';
+
+      state.scenes.forEach((scene, index) => {
+        const wrap = document.createElement('div');
+        wrap.className = 'scene-block';
+        wrap.dataset.sceneId = scene.id;
+
+        const hoverbar = document.createElement('div');
+        hoverbar.className = 'scene-hoverbar';
+        hoverbar.appendChild(makeHoverPill('Editar escena', () => openSceneModal('edit', scene.id)));
+        hoverbar.appendChild(makeHoverPill('Eliminar', () => deleteScene(scene.id)));
+        wrap.appendChild(hoverbar);
+
+        appendLine(wrap, headingToString(scene), 'sp-heading');
+        if (scene.description) appendLine(wrap, scene.description, 'sp-description');
+
+        scene.blocks.forEach(block => {
+          if (block.type === 'action') appendLine(wrap, block.text || '', 'sp-action');
+          if (block.type === 'character') appendLine(wrap, buildCharacterLine(block), 'sp-character');
+          if (block.type === 'dialogue') appendLine(wrap, block.text || '', 'sp-dialogue');
+          if (block.type === 'parenthetical') appendLine(wrap, block.text || '', 'sp-parenthetical');
+          if (block.type === 'transition') appendLine(wrap, block.value || '', 'sp-transition');
+        });
+
+        if (index === state.scenes.length - 1) {
+          const addZone = document.createElement('div');
+          addZone.className = 'add-scene-zone';
+          addZone.innerHTML = `<div><strong>+ Agregar escena</strong></div><div class="meta" style="margin-top:8px;">Se abrirá un lightbox para editarla.</div>`;
+          addZone.onclick = () => openSceneModal('new');
+          wrap.appendChild(addZone);
+        }
+
+        page.appendChild(wrap);
+      });
+    }
+
+    function appendLine(parent, text, klass) {
+      const line = document.createElement('div');
+      line.className = 'script-line ' + klass;
+      line.textContent = text;
+      parent.appendChild(line);
+    }
+
+    function makeHoverPill(label, onClick) {
+      const btn = document.createElement('button');
+      btn.className = 'hover-pill';
+      btn.textContent = label;
+      btn.onclick = (e) => { e.stopPropagation(); onClick(); };
+      return btn;
+    }
+
+    function moveScene(id, direction) {
+      const index = state.scenes.findIndex(s => s.id === id);
+      const nextIndex = index + direction;
+      if (index < 0 || nextIndex < 0 || nextIndex >= state.scenes.length) return;
+      const temp = state.scenes[index];
+      state.scenes[index] = state.scenes[nextIndex];
+      state.scenes[nextIndex] = temp;
+      render();
+    }
+
+    function deleteScene(id) {
+      if (state.scenes.length === 1) return;
+      const idx = state.scenes.findIndex(s => s.id === id);
+      state.scenes = state.scenes.filter(s => s.id !== id);
+      if (state.selectedSceneId === id) {
+        state.selectedSceneId = (state.scenes[Math.max(0, idx - 1)] || state.scenes[0]).id;
       }
+      render();
+    }
 
-      const sceneIndex = state.scenes.findIndex(s => s.id === scene.id) + 1;
+    function openSceneModal(mode, sceneId = null) {
+      modalState.mode = mode;
+      modalState.sceneId = sceneId;
+      modalState.draft = mode === 'edit'
+        ? clone(state.scenes.find(s => s.id === sceneId))
+        : {
+            id: uid(),
+            heading: { type: 'INT.', location: 'NEW LOCATION', time: 'DAY' },
+            description: 'Describe the initial situation of the scene.',
+            blocks: [
+              { id: uid(), type: 'action', text: 'A new action begins here.' },
+              { id: uid(), type: 'character', name: 'CHARACTER', suffix: '' },
+              { id: uid(), type: 'dialogue', text: 'This is the first line of dialogue.' }
+            ]
+          };
+      document.getElementById('sceneModalOverlay').style.display = 'flex';
+      renderSceneModal();
+    }
 
-      el.innerHTML = `
+    function closeSceneModal() {
+      document.getElementById('sceneModalOverlay').style.display = 'none';
+      modalState = { mode: 'edit', sceneId: null, draft: null };
+    }
+
+    function saveSceneModal() {
+      if (!modalState.draft) return;
+      if (modalState.mode === 'new') {
+        state.scenes.push(clone(modalState.draft));
+        state.selectedSceneId = modalState.draft.id;
+      } else {
+        const idx = state.scenes.findIndex(s => s.id === modalState.sceneId);
+        if (idx >= 0) state.scenes[idx] = clone(modalState.draft);
+        state.selectedSceneId = modalState.draft.id;
+      }
+      closeSceneModal();
+      render();
+    }
+
+    function renderSceneModal() {
+      const draft = modalState.draft;
+      if (!draft) return;
+
+      document.getElementById('modalTitle').textContent = modalState.mode === 'new' ? 'Agregar escena' : 'Editar escena';
+      const body = document.getElementById('sceneModalBody');
+      body.innerHTML = `
         <div class="stack">
-          <div>
-            <div class="section-title">Escena ${sceneIndex}</div>
-            <p class="help-text">Cada escena tiene un encabezado, una descripción general y bloques internos.</p>
-          </div>
-
           <div class="stack">
             <div class="section-title">Encabezado</div>
             <div class="heading-grid">
-              <select id="headingType" class="select"></select>
-              <input id="headingLocation" class="field" placeholder="LOCATION" value="${escapeHtml(scene.heading.location)}" />
-              <select id="headingTime" class="select"></select>
+              <select id="mHeadingType" class="select"></select>
+              <input id="mHeadingLocation" class="field" placeholder="LOCATION" value="${escapeHtml(draft.heading.location)}" />
+              <select id="mHeadingTime" class="select"></select>
             </div>
-            <div class="help-text">Define dónde y cuándo ocurre la escena.</div>
-            <div class="generated-heading">${escapeHtml(headingToString(scene))}</div>
+            <p class="help-text">Define dónde y cuándo ocurre la escena. Aquí sí pueden aparecer INT., EXT. o INT./EXT.</p>
+            <div class="generated-heading">${escapeHtml(headingToString(draft))}</div>
           </div>
 
           <div class="stack">
             <div class="section-title">Descripción de escena</div>
-            <textarea id="sceneDescription" class="textarea" placeholder="The room is silent. A lamp flickers in the corner.">${escapeHtml(scene.description)}</textarea>
-            <div class="help-text">Describe el ambiente o situación inicial de la escena.</div>
+            <textarea id="mSceneDescription" class="textarea" placeholder="The room is silent. A lamp flickers in the corner.">${escapeHtml(draft.description)}</textarea>
+            <p class="help-text">Describe el ambiente o situación inicial de la escena.</p>
           </div>
 
           <div class="stack">
             <div class="section-title">Bloques de la escena</div>
-            <div id="blockList" class="stack"></div>
+            <div id="modalBlockList" class="stack"></div>
             <div class="add-blocks">
-              <button onclick="addBlock('action')">+ Acción</button>
-              <button onclick="addBlock('character')">+ Personaje</button>
-              <button onclick="addBlock('dialogue')">+ Diálogo</button>
-              <button onclick="addBlock('parenthetical')">+ Acotación</button>
-              <button onclick="addBlock('transition')">+ Transición</button>
+              <button onclick="modalAddBlock('action')">+ Acción</button>
+              <button onclick="modalAddBlock('character')">+ Personaje</button>
+              <button onclick="modalAddBlock('dialogue')">+ Diálogo</button>
+              <button onclick="modalAddBlock('parenthetical')">+ Acotación</button>
+              <button onclick="modalAddBlock('transition')">+ Transición</button>
             </div>
           </div>
         </div>
       `;
 
-      const typeSelect = document.getElementById('headingType');
+      const typeSelect = document.getElementById('mHeadingType');
       HEADING_TYPES.forEach(opt => {
         const option = document.createElement('option');
         option.value = opt;
         option.textContent = opt;
-        option.selected = scene.heading.type === opt;
+        option.selected = draft.heading.type === opt;
         typeSelect.appendChild(option);
       });
-      typeSelect.onchange = (e) => updateSceneHeading('type', e.target.value);
+      typeSelect.onchange = (e) => { draft.heading.type = e.target.value; renderSceneModal(); };
 
-      const timeSelect = document.getElementById('headingTime');
+      const timeSelect = document.getElementById('mHeadingTime');
       TIMES.forEach(opt => {
         const option = document.createElement('option');
         option.value = opt;
         option.textContent = opt;
-        option.selected = scene.heading.time === opt;
+        option.selected = draft.heading.time === opt;
         timeSelect.appendChild(option);
       });
-      timeSelect.onchange = (e) => updateSceneHeading('time', e.target.value);
+      timeSelect.onchange = (e) => { draft.heading.time = e.target.value; renderSceneModal(); };
 
-      document.getElementById('headingLocation').oninput = (e) => updateSceneHeading('location', e.target.value.toUpperCase());
-      document.getElementById('sceneDescription').oninput = (e) => updateSceneDescription(e.target.value);
+      document.getElementById('mHeadingLocation').oninput = (e) => { draft.heading.location = e.target.value.toUpperCase(); renderSceneModal(); };
+      document.getElementById('mSceneDescription').oninput = (e) => { draft.description = e.target.value; };
 
-      const blockList = document.getElementById('blockList');
-      scene.blocks.forEach((block, index) => blockList.appendChild(renderBlock(block, index, scene.blocks.length)));
+      const list = document.getElementById('modalBlockList');
+      draft.blocks.forEach((block, index) => list.appendChild(renderModalBlock(block, index, draft.blocks.length)));
     }
 
-    function renderBlock(block, index, total) {
+    function renderModalBlock(block, index, total) {
       const wrap = document.createElement('div');
-      wrap.className = 'block';
+      wrap.className = 'block-card';
       const meta = BLOCK_META[block.type];
 
       const top = document.createElement('div');
       top.className = 'block-top';
       top.innerHTML = `
-        <div class="block-top-left">
+        <div>
           <h4>${meta.label}</h4>
           <p>${meta.description}</p>
         </div>
       `;
 
-      const actionBar = document.createElement('div');
-      actionBar.className = 'block-actions';
-      const up = document.createElement('button');
-      up.className = 'small';
-      up.textContent = '↑';
-      up.onclick = () => moveBlock(block.id, -1);
-      up.disabled = index === 0;
-      const down = document.createElement('button');
-      down.className = 'small';
-      down.textContent = '↓';
-      down.onclick = () => moveBlock(block.id, 1);
-      down.disabled = index === total - 1;
-      const del = document.createElement('button');
-      del.className = 'small danger';
-      del.textContent = 'Eliminar';
-      del.onclick = () => deleteBlock(block.id);
-      actionBar.appendChild(up);
-      actionBar.appendChild(down);
-      actionBar.appendChild(del);
-      top.appendChild(actionBar);
+      const actions = document.createElement('div');
+      actions.className = 'block-actions';
+      actions.appendChild(makeModalMiniButton('↑', () => modalMoveBlock(block.id, -1), index === 0));
+      actions.appendChild(makeModalMiniButton('↓', () => modalMoveBlock(block.id, 1), index === total - 1));
+      actions.appendChild(makeModalMiniButton('Eliminar', () => modalDeleteBlock(block.id), false, 'danger'));
+      top.appendChild(actions);
       wrap.appendChild(top);
 
       if (block.type === 'action') {
@@ -841,7 +926,7 @@
         ta.className = 'textarea';
         ta.placeholder = meta.placeholder;
         ta.value = block.text || '';
-        ta.oninput = (e) => updateBlock(block.id, 'text', e.target.value);
+        ta.oninput = (e) => { block.text = e.target.value; };
         wrap.appendChild(ta);
         wrap.appendChild(createGlossaryHelp(['POV', 'SFX', 'BG']));
       }
@@ -855,7 +940,7 @@
         input.className = 'field';
         input.placeholder = 'CHARACTER NAME';
         input.value = block.name || '';
-        input.oninput = (e) => updateBlock(block.id, 'name', e.target.value.toUpperCase());
+        input.oninput = (e) => { block.name = e.target.value.toUpperCase(); };
 
         const select = document.createElement('select');
         select.className = 'select';
@@ -866,7 +951,7 @@
           option.selected = (block.suffix || '') === opt;
           select.appendChild(option);
         });
-        select.onchange = (e) => updateBlock(block.id, 'suffix', e.target.value);
+        select.onchange = (e) => { block.suffix = e.target.value; };
 
         row.appendChild(input);
         row.appendChild(select);
@@ -878,9 +963,9 @@
         const ta = document.createElement('textarea');
         ta.className = 'textarea';
         ta.placeholder = meta.placeholder;
-        ta.value = block.text || '';
         ta.style.minHeight = block.type === 'parenthetical' ? '72px' : '110px';
-        ta.oninput = (e) => updateBlock(block.id, 'text', e.target.value);
+        ta.value = block.text || '';
+        ta.oninput = (e) => { block.text = e.target.value; };
         wrap.appendChild(ta);
       }
 
@@ -894,12 +979,46 @@
           option.selected = block.value === opt;
           select.appendChild(option);
         });
-        select.onchange = (e) => updateBlock(block.id, 'value', e.target.value);
+        select.onchange = (e) => { block.value = e.target.value; };
         wrap.appendChild(select);
         wrap.appendChild(createGlossaryHelp(['FADE IN:', 'CUT TO:', 'DISSOLVE TO:', 'SMASH CUT TO:', 'FADE OUT.']));
       }
 
       return wrap;
+    }
+
+    function makeModalMiniButton(label, onClick, disabled = false, variant = '') {
+      const btn = document.createElement('button');
+      btn.className = 'small' + (variant ? ' ' + variant : '');
+      btn.textContent = label;
+      btn.disabled = disabled;
+      btn.onclick = onClick;
+      return btn;
+    }
+
+    function modalAddBlock(type) {
+      const block = { id: uid(), type };
+      if (type === 'action' || type === 'dialogue' || type === 'parenthetical') block.text = BLOCK_META[type].placeholder || '';
+      if (type === 'character') { block.name = 'CHARACTER'; block.suffix = ''; }
+      if (type === 'transition') block.value = 'CUT TO:';
+      modalState.draft.blocks.push(block);
+      renderSceneModal();
+    }
+
+    function modalDeleteBlock(id) {
+      modalState.draft.blocks = modalState.draft.blocks.filter(b => b.id !== id);
+      renderSceneModal();
+    }
+
+    function modalMoveBlock(id, direction) {
+      const blocks = modalState.draft.blocks;
+      const index = blocks.findIndex(b => b.id === id);
+      const nextIndex = index + direction;
+      if (index < 0 || nextIndex < 0 || nextIndex >= blocks.length) return;
+      const temp = blocks[index];
+      blocks[index] = blocks[nextIndex];
+      blocks[nextIndex] = temp;
+      renderSceneModal();
     }
 
     function createGlossaryHelp(terms) {
@@ -935,42 +1054,6 @@
         });
     }
 
-    function renderPreview() {
-      const el = document.getElementById('scriptPreview');
-      el.innerHTML = '';
-
-      state.scenes.forEach(scene => {
-        appendPreviewLine(el, headingToString(scene), 'sp-heading');
-        if (scene.description) appendPreviewLine(el, scene.description, 'sp-description');
-
-        scene.blocks.forEach(block => {
-          if (block.type === 'action') appendPreviewLine(el, block.text || '', 'sp-action');
-          if (block.type === 'character') appendPreviewLine(el, buildCharacterLine(block), 'sp-character');
-          if (block.type === 'dialogue') appendPreviewLine(el, block.text || '', 'sp-dialogue');
-          if (block.type === 'parenthetical') appendPreviewLine(el, block.text || '', 'sp-parenthetical');
-          if (block.type === 'transition') appendPreviewLine(el, block.value || '', 'sp-transition');
-        });
-
-        appendPreviewLine(el, '', 'sp-description');
-      });
-    }
-
-    function buildCharacterLine(block) {
-      return [block.name || '', block.suffix || ''].filter(Boolean).join(' ');
-    }
-
-    function appendPreviewLine(container, text, klass) {
-      const div = document.createElement('div');
-      div.className = 'script-line ' + klass;
-      div.textContent = text;
-      container.appendChild(div);
-    }
-
-    function togglePreview(show) {
-      document.getElementById('previewOverlay').style.display = show ? 'flex' : 'none';
-      if (show) renderPreview();
-    }
-
     function exportTXT() {
       let output = '';
       state.scenes.forEach(scene => {
@@ -985,7 +1068,6 @@
         });
         output += '\n';
       });
-
       const blob = new Blob([output], { type: 'text/plain;charset=utf-8' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -1006,9 +1088,8 @@
 
     function render() {
       renderSceneList();
-      renderEditor();
+      renderPaper();
       renderGlossary();
-      renderPreview();
     }
 
     newDocument();
