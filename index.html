@@ -13,9 +13,13 @@
       <strong>Script Maker for Creative Dummies</strong><br />
       <small>Editor visual sobre página de guion</small>
     </div>
+
     <div class="toolbar">
       <button onclick="newDocument()">Nuevo</button>
       <button id="writingModeBtn" class="toggle-off" onclick="toggleWritingMode()">Modo escritura: OFF</button>
+      <span id="writingModeHelp" class="writing-mode-help">
+        Modo normal: el modal no recentra el bloque activo.
+      </span>
       <button onclick="exportTXT()">Exportar TXT</button>
       <button onclick="window.print()">PDF</button>
     </div>
@@ -44,9 +48,13 @@
     <div class="modal">
       <h2 id="modalTitle">Editar escena</h2>
       <div id="modalBody"></div>
+
       <div class="modal-actions">
-        <button onclick="closeModal()">Cancelar</button>
-        <button class="primary" onclick="saveScene()">Guardar escena</button>
+        <span class="muted">Cada campo incluye guías y sugerencias contextuales.</span>
+        <div>
+          <button onclick="closeModal()">Cancelar</button>
+          <button class="primary" onclick="saveScene()">Guardar escena</button>
+        </div>
       </div>
     </div>
   </div>
