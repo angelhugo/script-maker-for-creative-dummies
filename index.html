@@ -1,44 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Script Maker for Creative Dummies</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Script Maker for Creative Dummies</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
-
 <body>
+  <header class="topbar">
+    <div>
+      <h1>Script Maker for Creative Dummies</h1>
+      <p>Hollywood-style screenplay formatting for people who hate formatting.</p>
+    </div>
+    <div class="topbar-actions">
+      <button onclick="loadExample()">Load Example</button>
+      <button onclick="addBlock('locacion')">+ Scene Heading</button>
+      <button onclick="addBlock('descripcion')">+ Action</button>
+      <button onclick="addBlock('dialogo')">+ Dialogue</button>
+      <button onclick="exportScript()">Export TXT</button>
+    </div>
+  </header>
 
-<header>
-<h1>Script Maker for Creative Dummies</h1>
-<p>Write professional scripts without looking like a dummy.</p>
-</header>
+  <main class="layout">
+    <section class="panel editor-panel">
+      <h2>Editor</h2>
+      <div id="blocks"></div>
+      <button class="add-generic" onclick="addBlock('descripcion')">+ Add Block</button>
+    </section>
 
-<div class="container">
+    <section class="panel preview-panel">
+      <h2>Preview</h2>
+      <div class="page">
+        <div id="preview"></div>
+      </div>
+    </section>
 
-<div class="editor">
+    <aside class="panel sidebar">
+      <h2>Screenwriting Abbreviations</h2>
+      <input
+        type="text"
+        id="search"
+        placeholder="Search abbreviation..."
+        onkeyup="filterAbbr()"
+      />
+      <ul id="abbrList"></ul>
+    </aside>
+  </main>
 
-<h2>Script Editor</h2>
-
-<div id="blocks"></div>
-
-<button onclick="addBlock()">+ Add Block</button>
-<button onclick="exportScript()">Export TXT</button>
-
-</div>
-
-<div class="sidebar">
-
-<h2>Screenwriting Abbreviations</h2>
-
-<input type="text" id="search" placeholder="Search abbreviation..." onkeyup="filterAbbr()">
-
-<ul id="abbrList"></ul>
-
-</div>
-
-</div>
-
-<script src="script.js"></script>
-
+  <script src="script.js"></script>
 </body>
 </html>
