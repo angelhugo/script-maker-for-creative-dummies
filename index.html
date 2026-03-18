@@ -1,73 +1,1017 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Script Maker for Creative Dummies</title>
+  <style>
+    :root {
+      --bg: #f3f4f6;
+      --panel: #ffffff;
+      --border: #d1d5db;
+      --text: #111827;
+      --muted: #6b7280;
+      --accent: #111827;
+      --soft: #f9fafb;
+      --selected: #e5e7eb;
+      --danger: #b91c1c;
+    }
 
-<meta charset="UTF-8">
-<title>Script Maker for Creative Dummies</title>
+    * { box-sizing: border-box; }
 
-<link href="https://cdn.jsdelivr.net/npm/quill@2/dist/quill.snow.css" rel="stylesheet">
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
 
-<style>
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 20px;
+      background: #111;
+      color: white;
+      border-bottom: 1px solid #000;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
 
-body{
-margin:0;
-font-family:Arial;
-background:#f3f3f3;
-}
+    .brand h1 {
+      margin: 0;
+      font-size: 24px;
+    }
 
-header{
-background:#111;
-color:white;
-padding:20px;
-}
+    .brand p {
+      margin: 4px 0 0;
+      color: #d1d5db;
+      font-size: 13px;
+    }
 
-.container{
-max-width:1000px;
-margin:auto;
-padding:20px;
-}
+    .toolbar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
 
-#editor{
-height:600px;
-background:white;
-}
+    button, select, input, textarea {
+      font: inherit;
+    }
 
-</style>
+    button, .button-like {
+      border: 1px solid var(--border);
+      background: white;
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
 
+    button.primary {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+
+    button.danger {
+      color: var(--danger);
+      border-color: #fecaca;
+      background: #fff5f5;
+    }
+
+    button.small {
+      padding: 6px 10px;
+      font-size: 12px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 280px minmax(500px, 1fr) 340px;
+      gap: 16px;
+      padding: 16px;
+      align-items: start;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,.04);
+    }
+
+    .panel-header {
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+      background: var(--soft);
+    }
+
+    .panel-header h2 {
+      margin: 0 0 6px;
+      font-size: 18px;
+    }
+
+    .panel-header p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .panel-body {
+      padding: 16px;
+    }
+
+    .scene-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .scene-item {
+      border: 1px solid var(--border);
+      background: white;
+      border-radius: 12px;
+      padding: 10px 12px;
+      cursor: pointer;
+    }
+
+    .scene-item.selected {
+      background: var(--selected);
+      border-color: #9ca3af;
+    }
+
+    .scene-item-title {
+      font-weight: bold;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .scene-item-subtitle {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .section-title {
+      font-size: 14px;
+      font-weight: bold;
+      margin: 0 0 8px;
+    }
+
+    .help-text {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+      margin: 6px 0 0;
+    }
+
+    .stack { display: flex; flex-direction: column; gap: 12px; }
+    .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+
+    .field,
+    .textarea,
+    .select {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      background: white;
+    }
+
+    .textarea {
+      min-height: 92px;
+      resize: vertical;
+      line-height: 1.5;
+    }
+
+    .heading-grid {
+      display: grid;
+      grid-template-columns: 140px 1fr 170px;
+      gap: 10px;
+    }
+
+    .generated-heading {
+      background: var(--soft);
+      border: 1px dashed var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: .02em;
+    }
+
+    .block {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      background: white;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .block-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .block-top-left h4 {
+      margin: 0 0 4px;
+      font-size: 15px;
+    }
+
+    .block-top-left p {
+      margin: 0;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .abbr-help {
+      display: grid;
+      gap: 6px;
+      padding: 10px;
+      border-radius: 10px;
+      background: var(--soft);
+      border: 1px solid var(--border);
+    }
+
+    .abbr-help-item {
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .abbr-help-item strong {
+      display: inline-block;
+      min-width: 70px;
+    }
+
+    .block-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .add-blocks {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .search-input {
+      width: 100%;
+      margin-bottom: 12px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+    }
+
+    .glossary-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: calc(100vh - 250px);
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .glossary-item {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      background: white;
+    }
+
+    .glossary-item h4 {
+      margin: 0 0 6px;
+      font-size: 14px;
+    }
+
+    .glossary-item p {
+      margin: 0 0 6px;
+      font-size: 12px;
+      line-height: 1.45;
+      color: var(--muted);
+    }
+
+    .glossary-item .meta {
+      font-size: 11px;
+      text-transform: uppercase;
+      color: var(--muted);
+      letter-spacing: .04em;
+    }
+
+    .preview-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(17, 24, 39, 0.75);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 40;
+    }
+
+    .preview-modal {
+      width: min(900px, 100%);
+      max-height: calc(100vh - 40px);
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .preview-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      background: var(--soft);
+    }
+
+    .preview-body {
+      overflow: auto;
+      padding: 24px;
+      background: #ddd;
+    }
+
+    .page {
+      width: 8.5in;
+      min-height: 11in;
+      margin: 0 auto;
+      background: white;
+      box-shadow: 0 4px 12px rgba(0,0,0,.14);
+      padding-top: 1in;
+      padding-right: 1in;
+      padding-bottom: 1in;
+      padding-left: 1.5in;
+    }
+
+    .script-preview {
+      font-family: "Courier New", Courier, monospace;
+      font-size: 12pt;
+      line-height: 1.2;
+      color: black;
+    }
+
+    .script-line {
+      white-space: pre-wrap;
+      margin-bottom: 0.12in;
+    }
+
+    .sp-heading,
+    .sp-character,
+    .sp-transition,
+    .sp-suffix {
+      text-transform: uppercase;
+    }
+
+    .sp-heading { width: 6in; font-weight: bold; }
+    .sp-description, .sp-action { width: 6in; }
+    .sp-character { margin-left: 2.2in; width: 2.3in; }
+    .sp-parenthetical { margin-left: 1.7in; width: 3in; }
+    .sp-dialogue { margin-left: 1.2in; width: 3.5in; }
+    .sp-transition { margin-left: 4.3in; width: 1.7in; text-align: right; }
+
+    @media (max-width: 1280px) {
+      .layout { grid-template-columns: 1fr; }
+      .glossary-list { max-height: none; }
+    }
+
+    @media (max-width: 820px) {
+      .heading-grid { grid-template-columns: 1fr; }
+      .topbar { position: static; }
+      .page {
+        width: 100%;
+        min-height: auto;
+        padding: 32px;
+      }
+    }
+
+    @media print {
+      body * { visibility: hidden; }
+      .preview-overlay, .preview-overlay * { visibility: visible; }
+      .preview-overlay {
+        position: static;
+        background: white;
+        display: block !important;
+        padding: 0;
+      }
+      .preview-modal { box-shadow: none; width: auto; max-height: none; }
+      .preview-header { display: none; }
+      .preview-body { background: white; padding: 0; }
+      .page { box-shadow: none; margin: 0; }
+    }
+  </style>
 </head>
-
 <body>
+  <header class="topbar">
+    <div class="brand">
+      <h1>Script Maker for Creative Dummies</h1>
+      <p>Prototipo funcional para escribir guiones por escenas y bloques.</p>
+    </div>
+    <div class="toolbar">
+      <button onclick="newDocument()">Nuevo guion</button>
+      <button onclick="togglePreview(true)">Vista previa</button>
+      <button onclick="exportTXT()">Exportar TXT</button>
+      <button onclick="window.print()">Imprimir / PDF</button>
+    </div>
+  </header>
 
-<header>
+  <main class="layout">
+    <section class="panel">
+      <div class="panel-header">
+        <h2>Escenas</h2>
+        <p>La escena es la unidad principal. Selecciona una o crea una nueva.</p>
+      </div>
+      <div class="panel-body">
+        <div id="sceneList" class="scene-list"></div>
+        <button class="primary" onclick="addScene()">+ Nueva escena</button>
+      </div>
+    </section>
 
-<h1>Script Maker for Creative Dummies</h1>
-<p>Professional screenplay writing without the pain.</p>
+    <section class="panel">
+      <div class="panel-header">
+        <h2>Editor de escena</h2>
+        <p>Interfaz en español. Convenciones del guion en inglés y restringidas según el bloque.</p>
+      </div>
+      <div id="editorBody" class="panel-body"></div>
+    </section>
 
-</header>
+    <aside class="panel">
+      <div class="panel-header">
+        <h2>Glosario</h2>
+        <p>Términos en inglés, explicaciones en español y bloque donde se usan.</p>
+      </div>
+      <div class="panel-body">
+        <input id="glossarySearch" class="search-input" placeholder="Buscar INT., V.O., CUT TO..." oninput="renderGlossary()" />
+        <div id="glossaryList" class="glossary-list"></div>
+      </div>
+    </aside>
+  </main>
 
-<div class="container">
+  <div id="previewOverlay" class="preview-overlay">
+    <div class="preview-modal">
+      <div class="preview-header">
+        <strong>Vista previa del guion</strong>
+        <div class="toolbar">
+          <button onclick="window.print()">Imprimir / PDF</button>
+          <button class="primary" onclick="togglePreview(false)">Cerrar</button>
+        </div>
+      </div>
+      <div class="preview-body">
+        <div class="page">
+          <div id="scriptPreview" class="script-preview"></div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-<div id="editor"></div>
+  <script>
+    const GLOSSARY = [
+      { term: 'INT.', title: 'Interior', description: 'Indica que la escena ocurre dentro de un espacio cerrado.', block: 'Encabezado', example: 'INT. APARTMENT - NIGHT' },
+      { term: 'EXT.', title: 'Exterior', description: 'Indica que la escena ocurre en un espacio abierto o exterior.', block: 'Encabezado', example: 'EXT. CITY STREET - DAY' },
+      { term: 'INT./EXT.', title: 'Interior/Exterior', description: 'Indica que la escena se mueve entre interior y exterior.', block: 'Encabezado', example: 'INT./EXT. CAR - NIGHT' },
+      { term: '(V.O.)', title: 'Voice Over', description: 'Voz en off. El personaje habla, pero su voz no proviene del espacio físico de la escena.', block: 'Personaje', example: 'NARRATOR (V.O.)' },
+      { term: '(O.S.)', title: 'Off Screen', description: 'Fuera de pantalla. El personaje está presente en la escena, pero no aparece visible en el encuadre cuando habla.', block: 'Personaje', example: 'SARAH (O.S.)' },
+      { term: "(CONT'D)", title: 'Continued', description: 'Indica que el mismo personaje continúa hablando después de una interrupción o acción intermedia.', block: 'Personaje', example: "JOHN (CONT'D)" },
+      { term: 'FADE IN:', title: 'Inicio', description: 'Indica el comienzo del guion o de una secuencia importante.', block: 'Transición', example: 'FADE IN:' },
+      { term: 'CUT TO:', title: 'Corte directo', description: 'Transición directa entre una escena y la siguiente.', block: 'Transición', example: 'CUT TO:' },
+      { term: 'DISSOLVE TO:', title: 'Disolvencia', description: 'Transición suave en la que una escena se desvanece mientras aparece la siguiente.', block: 'Transición', example: 'DISSOLVE TO:' },
+      { term: 'SMASH CUT TO:', title: 'Corte abrupto', description: 'Cambio brusco de escena usado para generar sorpresa o impacto dramático.', block: 'Transición', example: 'SMASH CUT TO:' },
+      { term: 'FADE OUT.', title: 'Cierre', description: 'Indica el cierre de una escena o del guion completo.', block: 'Transición', example: 'FADE OUT.' },
+      { term: 'POV', title: 'Point of View', description: 'Indica que vemos la escena desde la perspectiva visual de un personaje.', block: 'Acción', example: 'POV — The door opens.' },
+      { term: 'SFX', title: 'Sound Effects', description: 'Indica efectos de sonido importantes dentro de la escena.', block: 'Acción', example: 'SFX: GLASS SHATTERS' },
+      { term: 'BG', title: 'Background', description: 'Sonido o acción que ocurre en el fondo de la escena.', block: 'Acción', example: 'BG: Traffic noise.' }
+    ];
 
-</div>
+    const BLOCK_META = {
+      action: {
+        label: 'Acción',
+        description: 'Describe lo que se ve en pantalla.',
+        placeholder: 'John walks into the room and closes the door.',
+      },
+      character: {
+        label: 'Personaje',
+        description: 'Identifica quién habla.',
+      },
+      dialogue: {
+        label: 'Diálogo',
+        description: 'Contiene lo que dice el personaje.',
+        placeholder: 'I told you this would happen.',
+      },
+      parenthetical: {
+        label: 'Acotación',
+        description: 'Indica cómo se dice una línea de diálogo.',
+        placeholder: '(whispering)',
+      },
+      transition: {
+        label: 'Transición',
+        description: 'Indica el cambio entre escenas.',
+      }
+    };
 
-<script src="https://cdn.jsdelivr.net/npm/quill@2/dist/quill.js"></script>
+    const HEADING_TYPES = ['INT.', 'EXT.', 'INT./EXT.'];
+    const TIMES = ['DAY', 'NIGHT', 'MORNING', 'EVENING', 'AFTERNOON', 'CONTINUOUS'];
+    const CHARACTER_SUFFIXES = ['', '(V.O.)', '(O.S.)', "(CONT'D)"];
+    const TRANSITIONS = ['FADE IN:', 'CUT TO:', 'DISSOLVE TO:', 'SMASH CUT TO:', 'FADE OUT.'];
 
-<script>
+    let state = {
+      title: 'Untitled Script',
+      selectedSceneId: null,
+      scenes: []
+    };
 
-const quill = new Quill('#editor', {
-theme: 'snow',
-modules:{
-toolbar:[
-['bold','italic','underline'],
-[{ 'header':[1,2,false]}],
-[{ 'list':'ordered'},{'list':'bullet'}],
-['clean']
-]
-}
-});
+    function uid() {
+      return Math.random().toString(36).slice(2, 10);
+    }
 
-</script>
+    function createDefaultScene(number = 1) {
+      return {
+        id: uid(),
+        heading: {
+          type: number === 1 ? 'EXT.' : 'INT.',
+          location: number === 1 ? 'CITY STREET' : 'OFFICE',
+          time: number === 1 ? 'NIGHT' : 'DAY'
+        },
+        description: number === 1
+          ? 'The street is empty. A single car passes in the distance.'
+          : 'The newsroom is quiet. Only the sound of keyboards remains.',
+        blocks: number === 1
+          ? [
+              { id: uid(), type: 'action', text: 'John walks into the street and checks both corners.' },
+              { id: uid(), type: 'character', name: 'JOHN', suffix: '' },
+              { id: uid(), type: 'dialogue', text: 'I should not be here.' },
+              { id: uid(), type: 'character', name: 'SARAH', suffix: '(O.S.)' },
+              { id: uid(), type: 'dialogue', text: 'Then why did you come?' },
+              { id: uid(), type: 'transition', value: 'CUT TO:' }
+            ]
+          : [
+              { id: uid(), type: 'action', text: 'A blinking cursor waits on the screen.' },
+              { id: uid(), type: 'character', name: 'EDITOR', suffix: '' },
+              { id: uid(), type: 'dialogue', text: 'Give me page one before the coffee gets cold.' }
+            ]
+      };
+    }
 
+    function newDocument() {
+      state = {
+        title: 'Untitled Script',
+        scenes: [createDefaultScene(1), createDefaultScene(2)],
+        selectedSceneId: null
+      };
+      state.selectedSceneId = state.scenes[0].id;
+      render();
+    }
+
+    function addScene() {
+      const scene = createDefaultScene(state.scenes.length + 1);
+      state.scenes.push(scene);
+      state.selectedSceneId = scene.id;
+      render();
+    }
+
+    function getSelectedScene() {
+      return state.scenes.find(s => s.id === state.selectedSceneId) || null;
+    }
+
+    function deleteScene(id) {
+      if (state.scenes.length === 1) return;
+      const idx = state.scenes.findIndex(s => s.id === id);
+      state.scenes = state.scenes.filter(s => s.id !== id);
+      if (state.selectedSceneId === id) {
+        const fallback = state.scenes[Math.max(0, idx - 1)] || state.scenes[0];
+        state.selectedSceneId = fallback.id;
+      }
+      render();
+    }
+
+    function moveScene(id, direction) {
+      const index = state.scenes.findIndex(s => s.id === id);
+      if (index < 0) return;
+      const nextIndex = index + direction;
+      if (nextIndex < 0 || nextIndex >= state.scenes.length) return;
+      const temp = state.scenes[index];
+      state.scenes[index] = state.scenes[nextIndex];
+      state.scenes[nextIndex] = temp;
+      render();
+    }
+
+    function updateSceneHeading(field, value) {
+      const scene = getSelectedScene();
+      if (!scene) return;
+      scene.heading[field] = value;
+      renderSceneList();
+      renderEditor();
+      renderPreview();
+    }
+
+    function updateSceneDescription(value) {
+      const scene = getSelectedScene();
+      if (!scene) return;
+      scene.description = value;
+      renderEditor();
+      renderPreview();
+    }
+
+    function addBlock(type) {
+      const scene = getSelectedScene();
+      if (!scene) return;
+      const block = { id: uid(), type };
+      if (type === 'action' || type === 'dialogue' || type === 'parenthetical') block.text = BLOCK_META[type].placeholder || '';
+      if (type === 'character') {
+        block.name = 'JOHN';
+        block.suffix = '';
+      }
+      if (type === 'transition') block.value = 'CUT TO:';
+      scene.blocks.push(block);
+      renderEditor();
+      renderPreview();
+    }
+
+    function updateBlock(blockId, field, value) {
+      const scene = getSelectedScene();
+      if (!scene) return;
+      const block = scene.blocks.find(b => b.id === blockId);
+      if (!block) return;
+      block[field] = value;
+      renderEditor();
+      renderPreview();
+    }
+
+    function deleteBlock(blockId) {
+      const scene = getSelectedScene();
+      if (!scene) return;
+      scene.blocks = scene.blocks.filter(b => b.id !== blockId);
+      renderEditor();
+      renderPreview();
+    }
+
+    function moveBlock(blockId, direction) {
+      const scene = getSelectedScene();
+      if (!scene) return;
+      const index = scene.blocks.findIndex(b => b.id === blockId);
+      const nextIndex = index + direction;
+      if (index < 0 || nextIndex < 0 || nextIndex >= scene.blocks.length) return;
+      const temp = scene.blocks[index];
+      scene.blocks[index] = scene.blocks[nextIndex];
+      scene.blocks[nextIndex] = temp;
+      renderEditor();
+      renderPreview();
+    }
+
+    function headingToString(scene) {
+      const { type, location, time } = scene.heading;
+      const loc = (location || '').trim().toUpperCase();
+      const timeStr = (time || '').trim().toUpperCase();
+      const parts = [type, loc].filter(Boolean).join(' ');
+      return [parts, timeStr].filter(Boolean).join(' - ');
+    }
+
+    function renderSceneList() {
+      const el = document.getElementById('sceneList');
+      el.innerHTML = '';
+      state.scenes.forEach((scene, index) => {
+        const item = document.createElement('div');
+        item.className = 'scene-item' + (scene.id === state.selectedSceneId ? ' selected' : '');
+        item.onclick = () => { state.selectedSceneId = scene.id; renderEditor(); renderSceneList(); };
+
+        const title = document.createElement('div');
+        title.className = 'scene-item-title';
+        title.textContent = `${index + 1}. ${headingToString(scene) || 'UNTITLED SCENE'}`;
+
+        const subtitle = document.createElement('div');
+        subtitle.className = 'scene-item-subtitle';
+        subtitle.textContent = `${scene.blocks.length} bloques`;
+
+        const actions = document.createElement('div');
+        actions.className = 'row';
+        actions.style.marginTop = '8px';
+
+        const up = document.createElement('button');
+        up.className = 'small';
+        up.textContent = '↑';
+        up.onclick = (e) => { e.stopPropagation(); moveScene(scene.id, -1); };
+
+        const down = document.createElement('button');
+        down.className = 'small';
+        down.textContent = '↓';
+        down.onclick = (e) => { e.stopPropagation(); moveScene(scene.id, 1); };
+
+        const del = document.createElement('button');
+        del.className = 'small danger';
+        del.textContent = 'Eliminar';
+        del.onclick = (e) => { e.stopPropagation(); deleteScene(scene.id); };
+
+        actions.appendChild(up);
+        actions.appendChild(down);
+        actions.appendChild(del);
+
+        item.appendChild(title);
+        item.appendChild(subtitle);
+        item.appendChild(actions);
+        el.appendChild(item);
+      });
+    }
+
+    function renderEditor() {
+      const el = document.getElementById('editorBody');
+      const scene = getSelectedScene();
+      if (!scene) {
+        el.innerHTML = '<p>No hay escena seleccionada.</p>';
+        return;
+      }
+
+      const sceneIndex = state.scenes.findIndex(s => s.id === scene.id) + 1;
+
+      el.innerHTML = `
+        <div class="stack">
+          <div>
+            <div class="section-title">Escena ${sceneIndex}</div>
+            <p class="help-text">Cada escena tiene un encabezado, una descripción general y bloques internos.</p>
+          </div>
+
+          <div class="stack">
+            <div class="section-title">Encabezado</div>
+            <div class="heading-grid">
+              <select id="headingType" class="select"></select>
+              <input id="headingLocation" class="field" placeholder="LOCATION" value="${escapeHtml(scene.heading.location)}" />
+              <select id="headingTime" class="select"></select>
+            </div>
+            <div class="help-text">Define dónde y cuándo ocurre la escena.</div>
+            <div class="generated-heading">${escapeHtml(headingToString(scene))}</div>
+          </div>
+
+          <div class="stack">
+            <div class="section-title">Descripción de escena</div>
+            <textarea id="sceneDescription" class="textarea" placeholder="The room is silent. A lamp flickers in the corner.">${escapeHtml(scene.description)}</textarea>
+            <div class="help-text">Describe el ambiente o situación inicial de la escena.</div>
+          </div>
+
+          <div class="stack">
+            <div class="section-title">Bloques de la escena</div>
+            <div id="blockList" class="stack"></div>
+            <div class="add-blocks">
+              <button onclick="addBlock('action')">+ Acción</button>
+              <button onclick="addBlock('character')">+ Personaje</button>
+              <button onclick="addBlock('dialogue')">+ Diálogo</button>
+              <button onclick="addBlock('parenthetical')">+ Acotación</button>
+              <button onclick="addBlock('transition')">+ Transición</button>
+            </div>
+          </div>
+        </div>
+      `;
+
+      const typeSelect = document.getElementById('headingType');
+      HEADING_TYPES.forEach(opt => {
+        const option = document.createElement('option');
+        option.value = opt;
+        option.textContent = opt;
+        option.selected = scene.heading.type === opt;
+        typeSelect.appendChild(option);
+      });
+      typeSelect.onchange = (e) => updateSceneHeading('type', e.target.value);
+
+      const timeSelect = document.getElementById('headingTime');
+      TIMES.forEach(opt => {
+        const option = document.createElement('option');
+        option.value = opt;
+        option.textContent = opt;
+        option.selected = scene.heading.time === opt;
+        timeSelect.appendChild(option);
+      });
+      timeSelect.onchange = (e) => updateSceneHeading('time', e.target.value);
+
+      document.getElementById('headingLocation').oninput = (e) => updateSceneHeading('location', e.target.value.toUpperCase());
+      document.getElementById('sceneDescription').oninput = (e) => updateSceneDescription(e.target.value);
+
+      const blockList = document.getElementById('blockList');
+      scene.blocks.forEach((block, index) => blockList.appendChild(renderBlock(block, index, scene.blocks.length)));
+    }
+
+    function renderBlock(block, index, total) {
+      const wrap = document.createElement('div');
+      wrap.className = 'block';
+      const meta = BLOCK_META[block.type];
+
+      const top = document.createElement('div');
+      top.className = 'block-top';
+      top.innerHTML = `
+        <div class="block-top-left">
+          <h4>${meta.label}</h4>
+          <p>${meta.description}</p>
+        </div>
+      `;
+
+      const actionBar = document.createElement('div');
+      actionBar.className = 'block-actions';
+      const up = document.createElement('button');
+      up.className = 'small';
+      up.textContent = '↑';
+      up.onclick = () => moveBlock(block.id, -1);
+      up.disabled = index === 0;
+      const down = document.createElement('button');
+      down.className = 'small';
+      down.textContent = '↓';
+      down.onclick = () => moveBlock(block.id, 1);
+      down.disabled = index === total - 1;
+      const del = document.createElement('button');
+      del.className = 'small danger';
+      del.textContent = 'Eliminar';
+      del.onclick = () => deleteBlock(block.id);
+      actionBar.appendChild(up);
+      actionBar.appendChild(down);
+      actionBar.appendChild(del);
+      top.appendChild(actionBar);
+      wrap.appendChild(top);
+
+      if (block.type === 'action') {
+        const ta = document.createElement('textarea');
+        ta.className = 'textarea';
+        ta.placeholder = meta.placeholder;
+        ta.value = block.text || '';
+        ta.oninput = (e) => updateBlock(block.id, 'text', e.target.value);
+        wrap.appendChild(ta);
+        wrap.appendChild(createGlossaryHelp(['POV', 'SFX', 'BG']));
+      }
+
+      if (block.type === 'character') {
+        const row = document.createElement('div');
+        row.className = 'heading-grid';
+        row.style.gridTemplateColumns = '1fr 220px';
+
+        const input = document.createElement('input');
+        input.className = 'field';
+        input.placeholder = 'CHARACTER NAME';
+        input.value = block.name || '';
+        input.oninput = (e) => updateBlock(block.id, 'name', e.target.value.toUpperCase());
+
+        const select = document.createElement('select');
+        select.className = 'select';
+        CHARACTER_SUFFIXES.forEach(opt => {
+          const option = document.createElement('option');
+          option.value = opt;
+          option.textContent = opt || 'none';
+          option.selected = (block.suffix || '') === opt;
+          select.appendChild(option);
+        });
+        select.onchange = (e) => updateBlock(block.id, 'suffix', e.target.value);
+
+        row.appendChild(input);
+        row.appendChild(select);
+        wrap.appendChild(row);
+        wrap.appendChild(createGlossaryHelp(['(V.O.)', '(O.S.)', "(CONT'D)"]));
+      }
+
+      if (block.type === 'dialogue' || block.type === 'parenthetical') {
+        const ta = document.createElement('textarea');
+        ta.className = 'textarea';
+        ta.placeholder = meta.placeholder;
+        ta.value = block.text || '';
+        ta.style.minHeight = block.type === 'parenthetical' ? '72px' : '110px';
+        ta.oninput = (e) => updateBlock(block.id, 'text', e.target.value);
+        wrap.appendChild(ta);
+      }
+
+      if (block.type === 'transition') {
+        const select = document.createElement('select');
+        select.className = 'select';
+        TRANSITIONS.forEach(opt => {
+          const option = document.createElement('option');
+          option.value = opt;
+          option.textContent = opt;
+          option.selected = block.value === opt;
+          select.appendChild(option);
+        });
+        select.onchange = (e) => updateBlock(block.id, 'value', e.target.value);
+        wrap.appendChild(select);
+        wrap.appendChild(createGlossaryHelp(['FADE IN:', 'CUT TO:', 'DISSOLVE TO:', 'SMASH CUT TO:', 'FADE OUT.']));
+      }
+
+      return wrap;
+    }
+
+    function createGlossaryHelp(terms) {
+      const box = document.createElement('div');
+      box.className = 'abbr-help';
+      terms.forEach(term => {
+        const item = GLOSSARY.find(g => g.term === term);
+        if (!item) return;
+        const row = document.createElement('div');
+        row.className = 'abbr-help-item';
+        row.innerHTML = `<strong>${escapeHtml(item.term)}</strong> ${escapeHtml(item.description)}`;
+        box.appendChild(row);
+      });
+      return box;
+    }
+
+    function renderGlossary() {
+      const q = (document.getElementById('glossarySearch').value || '').trim().toLowerCase();
+      const el = document.getElementById('glossaryList');
+      el.innerHTML = '';
+      GLOSSARY
+        .filter(item => (`${item.term} ${item.title} ${item.description} ${item.block} ${item.example}`).toLowerCase().includes(q))
+        .forEach(item => {
+          const div = document.createElement('div');
+          div.className = 'glossary-item';
+          div.innerHTML = `
+            <h4>${escapeHtml(item.term)} <span class="meta">${escapeHtml(item.title)}</span></h4>
+            <p>${escapeHtml(item.description)}</p>
+            <p><strong>Bloque:</strong> ${escapeHtml(item.block)}</p>
+            <p><strong>Ejemplo:</strong> ${escapeHtml(item.example)}</p>
+          `;
+          el.appendChild(div);
+        });
+    }
+
+    function renderPreview() {
+      const el = document.getElementById('scriptPreview');
+      el.innerHTML = '';
+
+      state.scenes.forEach(scene => {
+        appendPreviewLine(el, headingToString(scene), 'sp-heading');
+        if (scene.description) appendPreviewLine(el, scene.description, 'sp-description');
+
+        scene.blocks.forEach(block => {
+          if (block.type === 'action') appendPreviewLine(el, block.text || '', 'sp-action');
+          if (block.type === 'character') appendPreviewLine(el, buildCharacterLine(block), 'sp-character');
+          if (block.type === 'dialogue') appendPreviewLine(el, block.text || '', 'sp-dialogue');
+          if (block.type === 'parenthetical') appendPreviewLine(el, block.text || '', 'sp-parenthetical');
+          if (block.type === 'transition') appendPreviewLine(el, block.value || '', 'sp-transition');
+        });
+
+        appendPreviewLine(el, '', 'sp-description');
+      });
+    }
+
+    function buildCharacterLine(block) {
+      return [block.name || '', block.suffix || ''].filter(Boolean).join(' ');
+    }
+
+    function appendPreviewLine(container, text, klass) {
+      const div = document.createElement('div');
+      div.className = 'script-line ' + klass;
+      div.textContent = text;
+      container.appendChild(div);
+    }
+
+    function togglePreview(show) {
+      document.getElementById('previewOverlay').style.display = show ? 'flex' : 'none';
+      if (show) renderPreview();
+    }
+
+    function exportTXT() {
+      let output = '';
+      state.scenes.forEach(scene => {
+        output += headingToString(scene) + '\n\n';
+        if (scene.description) output += scene.description + '\n\n';
+        scene.blocks.forEach(block => {
+          if (block.type === 'action') output += (block.text || '') + '\n\n';
+          if (block.type === 'character') output += buildCharacterLine(block) + '\n\n';
+          if (block.type === 'dialogue') output += (block.text || '') + '\n\n';
+          if (block.type === 'parenthetical') output += (block.text || '') + '\n\n';
+          if (block.type === 'transition') output += (block.value || '') + '\n\n';
+        });
+        output += '\n';
+      });
+
+      const blob = new Blob([output], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'script-maker-export.txt';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function render() {
+      renderSceneList();
+      renderEditor();
+      renderGlossary();
+      renderPreview();
+    }
+
+    newDocument();
+  </script>
 </body>
 </html>
