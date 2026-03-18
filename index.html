@@ -1,52 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Script Maker for Creative Dummies</title>
-  <link rel="stylesheet" href="style.css" />
+
+<meta charset="UTF-8">
+<title>Script Maker for Creative Dummies</title>
+
+<link href="https://cdn.jsdelivr.net/npm/quill@2/dist/quill.snow.css" rel="stylesheet">
+
+<style>
+
+body{
+margin:0;
+font-family:Arial;
+background:#f3f3f3;
+}
+
+header{
+background:#111;
+color:white;
+padding:20px;
+}
+
+.container{
+max-width:1000px;
+margin:auto;
+padding:20px;
+}
+
+#editor{
+height:600px;
+background:white;
+}
+
+</style>
+
 </head>
+
 <body>
-  <header class="topbar">
-    <div>
-      <h1>Script Maker for Creative Dummies</h1>
-      <p>Hollywood-style screenplay formatting for people who hate formatting.</p>
-    </div>
-    <div class="topbar-actions">
-      <button onclick="loadExample()">Load Example</button>
-      <button onclick="addBlock('locacion')">+ Scene Heading</button>
-      <button onclick="addBlock('descripcion')">+ Action</button>
-      <button onclick="addBlock('dialogo')">+ Dialogue</button>
-      <button onclick="exportScript()">Export TXT</button>
-    </div>
-  </header>
 
-  <main class="layout">
-    <section class="panel editor-panel">
-      <h2>Editor</h2>
-      <div id="blocks"></div>
-      <button class="add-generic" onclick="addBlock('descripcion')">+ Add Block</button>
-    </section>
+<header>
 
-    <section class="panel preview-panel">
-      <h2>Preview</h2>
-      <div class="page">
-        <div id="preview"></div>
-      </div>
-    </section>
+<h1>Script Maker for Creative Dummies</h1>
+<p>Professional screenplay writing without the pain.</p>
 
-    <aside class="panel sidebar">
-      <h2>Screenwriting Abbreviations</h2>
-      <input
-        type="text"
-        id="search"
-        placeholder="Search abbreviation..."
-        onkeyup="filterAbbr()"
-      />
-      <ul id="abbrList"></ul>
-    </aside>
-  </main>
+</header>
 
-  <script src="script.js"></script>
+<div class="container">
+
+<div id="editor"></div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/quill@2/dist/quill.js"></script>
+
+<script>
+
+const quill = new Quill('#editor', {
+theme: 'snow',
+modules:{
+toolbar:[
+['bold','italic','underline'],
+[{ 'header':[1,2,false]}],
+[{ 'list':'ordered'},{'list':'bullet'}],
+['clean']
+]
+}
+});
+
+</script>
+
 </body>
 </html>
