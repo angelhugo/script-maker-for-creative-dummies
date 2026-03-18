@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Script Maker for Creative Dummies</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header>
+<h1>Script Maker for Creative Dummies</h1>
+<p>Write professional scripts without looking like a dummy.</p>
+</header>
+
+<div class="container">
+
+<div class="editor">
+
+<h2>Script Editor</h2>
+
+<div id="blocks"></div>
+
+<button onclick="addBlock()">+ Add Block</button>
+<button onclick="exportScript()">Export TXT</button>
+
+</div>
+
+<div class="sidebar">
+
+<h2>Screenwriting Abbreviations</h2>
+
+<input type="text" id="search" placeholder="Search abbreviation..." onkeyup="filterAbbr()">
+
+<ul id="abbrList"></ul>
+
+</div>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
