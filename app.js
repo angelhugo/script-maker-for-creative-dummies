@@ -73,17 +73,79 @@ function renderWritingModeButton() {
   const btn = document.getElementById("writingModeBtn");
   if (!btn) return;
 
-  btn.textContent = appState.writingMode ? "FOCUS: ON" : "FOCUS: OFF";
+  btn.textContent = appState.writingMode ? "Focus: ON" : "Focus: OFF";
   btn.className = appState.writingMode ? "toggle-on" : "toggle-off";
 }
-
 
 function renderTopbarTitle() {
   const el = document.getElementById("topbarScriptTitle");
   if (!el) return;
+  if (el.dataset.editing === "true") return;
 
   const title = appState.currentScript?.project?.title?.trim();
   el.textContent = title || "Sin título";
+  el.title = "Haz clic para editar el título";
+  el.onclick = () => startTopbarTitleEdit();
+}
+
+function startTopbarTitleEdit() {
+  const el = document.getElementById("topbarScriptTitle");
+  if (!el || !appState.currentScript) return;
+  if (el.dataset.editing === "true") return;
+
+  const currentTitle = appState.currentScript.project?.title?.trim() || "";
+
+  el.dataset.editing = "true";
+  el.innerHTML = "";
+
+  const input = document.createElement("input");
+  input.type = "text";
+  input.value = currentTitle;
+  input.className = "topbar-title-input";
+  input.placeholder = "Sin título";
+
+  const commit = async () => {
+    if (el.dataset.editing !== "true") return;
+
+    const newTitle = input.value.trim();
+    appState.currentScript.project.title = newTitle;
+    touchCurrentScript();
+
+    try {
+      await putScript(appState.currentScript);
+      setSaveStatus("Guardado", "ok");
+    } catch {
+      setSaveStatus("Error al guardar", "warn");
+    }
+
+    el.dataset.editing = "false";
+    renderTopbarTitle();
+    renderPages();
+    renderLibraryIfOpen();
+  };
+
+  const cancel = () => {
+    el.dataset.editing = "false";
+    renderTopbarTitle();
+  };
+
+  input.addEventListener("keydown", async (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      await commit();
+    } else if (e.key === "Escape") {
+      e.preventDefault();
+      cancel();
+    }
+  });
+
+  input.addEventListener("blur", async () => {
+    await commit();
+  });
+
+  el.appendChild(input);
+  input.focus();
+  input.select();
 }
 
 function toggleWritingMode() {
@@ -965,7 +1027,6 @@ async function importLibraryJSON(file) {
   const text = await file.text();
   const payload = JSON.parse(text);
 
-  // Caso 1: biblioteca completa
   if (payload && Array.isArray(payload.scripts)) {
     const shouldReplace = confirm("Aceptar = reemplazar biblioteca actual. Cancelar = fusionar con la importada.");
     if (shouldReplace) {
@@ -976,6 +1037,7 @@ async function importLibraryJSON(file) {
 
     const scripts = await getAllScripts();
     appState.currentScript = scripts[0] || createNewScriptShell();
+
     if (!scripts.length) {
       await putScript(appState.currentScript);
     }
@@ -985,7 +1047,6 @@ async function importLibraryJSON(file) {
     return;
   }
 
-  // Caso 2: guion individual
   if (payload && payload.project && Array.isArray(payload.scenes)) {
     const scriptToImport = structuredClone(payload);
 
