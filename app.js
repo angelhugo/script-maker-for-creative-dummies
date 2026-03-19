@@ -56,6 +56,7 @@ function scheduleAutosave() {
   if (!appState.currentScript) return;
   clearTimeout(autosaveTimer);
   setSaveStatus("Guardando…", "warn");
+
   autosaveTimer = setTimeout(async () => {
     try {
       touchCurrentScript();
@@ -71,26 +72,8 @@ function scheduleAutosave() {
 function renderWritingModeButton() {
   const btn = document.getElementById("writingModeBtn");
   if (!btn) return;
-  btn.textContent = appState.writingMode ? "✍️ Focus activado" : "✍️ Focus";
-  btn.className = appState.writingMode ? "toggle-on" : "toggle-off";
-}
 
-function renderTopbarTitle() {
-  const el = document.getElementById("topbarScriptTitle");
-  if (!el) return;
-
-  const title = appState.currentScript?.project?.title?.trim();
-  el.textContent = title || "Sin título";
-}
-function toggleWritingMode() {
-  appState.writingMode = !appState.writingMode;
-  renderWritingModeButton();
-}
-
-function renderWritingModeButton() {
-  const btn = document.getElementById("writingModeBtn");
-  if (!btn) return;
-  btn.textContent = appState.writingMode ? "✍️ Focus activado" : "✍️ Focus";
+  btn.textContent = appState.writingMode ? "Focus: ON" : "Focus: OFF";
   btn.className = appState.writingMode ? "toggle-on" : "toggle-off";
 }
 
@@ -122,8 +105,10 @@ function closeExportMenu() {
 function maybeTypewriter(element) {
   document.querySelectorAll(".writing-active").forEach(el => el.classList.remove("writing-active"));
   if (!appState.writingMode || !element) return;
+
   const target = element.closest(".block") || element.closest(".section") || element;
   if (target && target.classList) target.classList.add("writing-active");
+
   requestAnimationFrame(() => {
     target.scrollIntoView({ block: "center", behavior: "smooth" });
   });
@@ -139,7 +124,12 @@ function collectCharacterNames(excludeBlockId = null) {
 
   appState.currentScript.scenes.forEach(scene => {
     scene.blocks.forEach(block => {
-      if (block.type === "character" && block.name && block.id !== excludeBlockId && !names.includes(block.name)) {
+      if (
+        block.type === "character" &&
+        block.name &&
+        block.id !== excludeBlockId &&
+        !names.includes(block.name)
+      ) {
         names.push(block.name);
       }
     });
@@ -147,7 +137,12 @@ function collectCharacterNames(excludeBlockId = null) {
 
   if (sceneDraft) {
     sceneDraft.blocks.forEach(block => {
-      if (block.type === "character" && block.name && block.id !== excludeBlockId && !names.includes(block.name)) {
+      if (
+        block.type === "character" &&
+        block.name &&
+        block.id !== excludeBlockId &&
+        !names.includes(block.name)
+      ) {
         names.push(block.name);
       }
     });
@@ -158,19 +153,35 @@ function collectCharacterNames(excludeBlockId = null) {
 
 function estimateSceneLines(scene) {
   let lines = 2;
-  if (scene.description) lines += Math.max(1, Math.ceil(scene.description.length / 65)) + 1;
+
+  if (scene.description) {
+    lines += Math.max(1, Math.ceil(scene.description.length / 65)) + 1;
+  }
+
   scene.blocks.forEach(block => {
-    if (block.type === "action") lines += Math.max(1, Math.ceil((block.text || "").length / 65)) + 1;
-    if (block.type === "character") lines += 1;
-    if (block.type === "dialogue") lines += Math.max(1, Math.ceil((block.text || "").length / 38)) + 1;
-    if (block.type === "parenthetical") lines += Math.max(1, Math.ceil((block.text || "").length / 32)) + 1;
-    if (block.type === "transition") lines += 1;
+    if (block.type === "action") {
+      lines += Math.max(1, Math.ceil((block.text || "").length / 65)) + 1;
+    }
+    if (block.type === "character") {
+      lines += 1;
+    }
+    if (block.type === "dialogue") {
+      lines += Math.max(1, Math.ceil((block.text || "").length / 38)) + 1;
+    }
+    if (block.type === "parenthetical") {
+      lines += Math.max(1, Math.ceil((block.text || "").length / 32)) + 1;
+    }
+    if (block.type === "transition") {
+      lines += 1;
+    }
   });
+
   return lines + 1;
 }
 
 function paginateScenes() {
   if (!appState.currentScript) return [];
+
   const maxLines = 52;
   const pages = [];
   let current = [];
@@ -178,11 +189,13 @@ function paginateScenes() {
 
   appState.currentScript.scenes.forEach((scene, idx) => {
     const needed = estimateSceneLines(scene);
+
     if (current.length && currentLines + needed > maxLines) {
       pages.push(current);
       current = [];
       currentLines = 0;
     }
+
     current.push({ scene, sceneNumber: idx + 1 });
     currentLines += needed;
   });
@@ -270,16 +283,16 @@ function renderTitlePage(container) {
 
   const center = document.createElement("div");
   center.className = "title-center";
-  
+
   center.appendChild(title);
   center.appendChild(byline);
   center.appendChild(author);
   center.appendChild(metaBox);
-  
+
   titlePage.appendChild(actions);
   titlePage.appendChild(center);
   titlePage.appendChild(contactBox);
-  
+
   page.appendChild(titlePage);
   shell.appendChild(meta);
   shell.appendChild(page);
@@ -294,6 +307,7 @@ function renderPages() {
   renderTitlePage(container);
 
   const pages = paginateScenes();
+
   pages.forEach((pageScenes, pageIndex) => {
     const shell = document.createElement("div");
     shell.className = "page-shell";
@@ -396,6 +410,7 @@ function moveScene(id, dir) {
   const i = scenes.findIndex(s => s.id === id);
   const j = i + dir;
   if (i < 0 || j < 0 || j >= scenes.length) return;
+
   [scenes[i], scenes[j]] = [scenes[j], scenes[i]];
   renderApp();
   scheduleAutosave();
@@ -412,38 +427,43 @@ function openProjectModal(isNew = false) {
   projectDraft = clone(appState.currentScript ? appState.currentScript.project : createEmptyProject());
   projectDraft.location = projectDraft.location || "Lima, Perú";
   projectDraft.date = formatDateToDDMMYYYY(projectDraft.date);
+  projectDraft.email = projectDraft.email || "";
+  projectDraft.phone = projectDraft.phone || "";
+  projectDraft.contactNotes = projectDraft.contactNotes || "";
+
   document.getElementById("projectModalTitle").textContent = isNew ? "Nuevo proyecto" : "Proyecto";
 
-const body = document.getElementById("projectModalBody");
-body.innerHTML = `
-  <div class="section">
-    <div class="section-title">Datos del proyecto</div>
-    <div class="help">Estos datos aparecen en el bloque principal de la carátula.</div>
-    <div class="grid2">
-      <input id="pTitle" class="field" placeholder="Título del proyecto" value="${escapeHtml(projectDraft.title)}">
-      <input id="pAuthor" class="field" placeholder="Autor" value="${escapeHtml(projectDraft.author)}">
-      <input id="pBasedOn" class="field" placeholder="Basado en / creado por (opcional)" value="${escapeHtml(projectDraft.basedOn)}">
-      <input id="pVersion" class="field" placeholder="Versión (ej: Draft 2)" value="${escapeHtml(projectDraft.version)}">
-      <input id="pDate" class="field" placeholder="Fecha" value="${escapeHtml(projectDraft.date)}">
-      <input id="pLocation" class="field" placeholder="Localidad" value="${escapeHtml(projectDraft.location || "")}">
+  const body = document.getElementById("projectModalBody");
+  body.innerHTML = `
+    <div class="section">
+      <div class="section-title">Datos del proyecto</div>
+      <div class="help">Estos datos aparecen en el bloque principal de la carátula.</div>
+      <div class="grid2">
+        <input id="pTitle" class="field" placeholder="Título del proyecto" value="${escapeHtml(projectDraft.title)}">
+        <input id="pAuthor" class="field" placeholder="Autor" value="${escapeHtml(projectDraft.author)}">
+        <input id="pBasedOn" class="field" placeholder="Basado en / creado por (opcional)" value="${escapeHtml(projectDraft.basedOn)}">
+        <input id="pVersion" class="field" placeholder="Versión (ej: Draft 2)" value="${escapeHtml(projectDraft.version)}">
+        <input id="pDate" class="field" placeholder="Fecha" value="${escapeHtml(projectDraft.date)}">
+        <input id="pLocation" class="field" placeholder="Localidad" value="${escapeHtml(projectDraft.location || "")}">
+      </div>
+      <div class="section" style="margin-top:12px;">
+        <textarea id="pNotes" placeholder="Logline o nota breve (opcional)">${escapeHtml(projectDraft.notes)}</textarea>
+      </div>
     </div>
-    <div class="section" style="margin-top:12px;">
-      <textarea id="pNotes" placeholder="Logline o nota breve (opcional)">${escapeHtml(projectDraft.notes)}</textarea>
-    </div>
-  </div>
 
-  <div class="section">
-    <div class="section-title">Contacto para la carátula</div>
-    <div class="help">Estos datos aparecen en la parte inferior de la carátula.</div>
-    <div class="grid2">
-      <input id="pEmail" class="field" placeholder="autor@email.com" value="${escapeHtml(projectDraft.email || "")}">
-      <input id="pPhone" class="field" placeholder="+51 999 999 999" value="${escapeHtml(projectDraft.phone || "")}">
+    <div class="section">
+      <div class="section-title">Contacto para la carátula</div>
+      <div class="help">Estos datos aparecen en la parte inferior de la carátula.</div>
+      <div class="grid2">
+        <input id="pEmail" class="field" placeholder="autor@email.com" value="${escapeHtml(projectDraft.email || "")}">
+        <input id="pPhone" class="field" placeholder="+51 999 999 999" value="${escapeHtml(projectDraft.phone || "")}">
+      </div>
+      <div class="section" style="margin-top:12px;">
+        <input id="pContactNotes" class="field" placeholder="Representación o información adicional (opcional)" value="${escapeHtml(projectDraft.contactNotes || "")}">
+      </div>
     </div>
-    <div class="section" style="margin-top:12px;">
-      <input id="pContactNotes" class="field" placeholder="Representación o información adicional (opcional)" value="${escapeHtml(projectDraft.contactNotes || "")}">
-    </div>
-  </div>
-`;
+  `;
+
   document.getElementById("projectModal").style.display = "flex";
 }
 
@@ -464,7 +484,9 @@ async function saveProjectModal() {
   projectDraft.contactNotes = document.getElementById("pContactNotes").value.trim();
   projectDraft.notes = document.getElementById("pNotes").value.trim();
 
-  if (!appState.currentScript) appState.currentScript = createNewScriptShell();
+  if (!appState.currentScript) {
+    appState.currentScript = createNewScriptShell();
+  }
 
   appState.currentScript.project = clone(projectDraft);
   touchCurrentScript();
@@ -505,6 +527,7 @@ function renderCharacterSuggestions(containerId, excludeBlockId, currentValue, o
   const box = document.getElementById(containerId);
   if (!box) return;
   box.innerHTML = "";
+
   const names = collectCharacterNames(excludeBlockId)
     .filter(name => !currentValue || name.includes(currentValue.toUpperCase()))
     .slice(0, 6);
@@ -547,7 +570,10 @@ function renderSceneBlock(block, index) {
     const textarea = document.createElement("textarea");
     textarea.placeholder = "Describe lo que ocurre en pantalla. Ej: John opens the door and steps inside.";
     textarea.value = block.text || "";
-    textarea.oninput = e => { block.text = e.target.value; maybeTypewriter(e.target); };
+    textarea.oninput = e => {
+      block.text = e.target.value;
+      maybeTypewriter(e.target);
+    };
     el.appendChild(textarea);
 
     const tip = document.createElement("div");
@@ -604,7 +630,10 @@ function renderSceneBlock(block, index) {
     const textarea = document.createElement("textarea");
     textarea.placeholder = "Escribe lo que dice el personaje. Ej: I shouldn't be here.";
     textarea.value = block.text || "";
-    textarea.oninput = e => { block.text = e.target.value; maybeTypewriter(e.target); };
+    textarea.oninput = e => {
+      block.text = e.target.value;
+      maybeTypewriter(e.target);
+    };
     el.appendChild(textarea);
 
     const tip = document.createElement("div");
@@ -617,7 +646,10 @@ function renderSceneBlock(block, index) {
     const textarea = document.createElement("textarea");
     textarea.placeholder = "Escribe una acotación breve. Ej: (whispering), (angry)";
     textarea.value = block.text || "";
-    textarea.oninput = e => { block.text = e.target.value; maybeTypewriter(e.target); };
+    textarea.oninput = e => {
+      block.text = e.target.value;
+      maybeTypewriter(e.target);
+    };
     el.appendChild(textarea);
 
     const tip = document.createElement("div");
@@ -635,7 +667,10 @@ function renderSceneBlock(block, index) {
       option.selected = opt.v === (block.value || "");
       select.appendChild(option);
     });
-    select.onchange = e => { block.value = e.target.value; maybeTypewriter(e.target); };
+    select.onchange = e => {
+      block.value = e.target.value;
+      maybeTypewriter(e.target);
+    };
     el.appendChild(select);
     el.appendChild(contextHelp(TRANSITIONS));
   }
@@ -669,7 +704,10 @@ function renderSceneModal() {
     option.selected = v === sceneDraft.heading.type;
     typeSel.appendChild(option);
   });
-  typeSel.onchange = e => { sceneDraft.heading.type = e.target.value; maybeTypewriter(e.target); };
+  typeSel.onchange = e => {
+    sceneDraft.heading.type = e.target.value;
+    maybeTypewriter(e.target);
+  };
 
   const timeSel = headingSection.querySelector("#mTime");
   TIMES.forEach(v => {
@@ -679,7 +717,10 @@ function renderSceneModal() {
     option.selected = v === sceneDraft.heading.time;
     timeSel.appendChild(option);
   });
-  timeSel.onchange = e => { sceneDraft.heading.time = e.target.value; maybeTypewriter(e.target); };
+  timeSel.onchange = e => {
+    sceneDraft.heading.time = e.target.value;
+    maybeTypewriter(e.target);
+  };
 
   headingSection.querySelector("#mLoc").oninput = e => {
     sceneDraft.heading.location = e.target.value.toUpperCase();
@@ -725,7 +766,12 @@ function renderSceneModal() {
 function openSceneModal(mode, sceneId = null) {
   sceneDraft = mode === "edit"
     ? clone(appState.currentScript.scenes.find(scene => scene.id === sceneId))
-    : { id: crypto.randomUUID(), heading: { type: "INT.", location: "LOCATION", time: "DAY" }, description: "", blocks: [] };
+    : {
+        id: crypto.randomUUID(),
+        heading: { type: "INT.", location: "LOCATION", time: "DAY" },
+        description: "",
+        blocks: []
+      };
 
   document.getElementById("sceneModalTitle").textContent = mode === "edit" ? "Editar escena" : "Agregar escena";
   renderSceneModal();
@@ -740,7 +786,10 @@ function closeSceneModal() {
 function addSceneBlock(type) {
   const block = { id: crypto.randomUUID(), type };
   if (type === "action" || type === "dialogue" || type === "parenthetical") block.text = "";
-  if (type === "character") { block.name = ""; block.suffix = ""; }
+  if (type === "character") {
+    block.name = "";
+    block.suffix = "";
+  }
   if (type === "transition") block.value = "CUT TO:";
   sceneDraft.blocks.push(block);
   renderSceneModal();
@@ -760,8 +809,11 @@ function deleteSceneBlock(index) {
 
 async function saveSceneModal() {
   const idx = appState.currentScript.scenes.findIndex(scene => scene.id === sceneDraft.id);
-  if (idx >= 0) appState.currentScript.scenes[idx] = clone(sceneDraft);
-  else appState.currentScript.scenes.push(clone(sceneDraft));
+  if (idx >= 0) {
+    appState.currentScript.scenes[idx] = clone(sceneDraft);
+  } else {
+    appState.currentScript.scenes.push(clone(sceneDraft));
+  }
 
   closeSceneModal();
   renderApp();
@@ -805,6 +857,7 @@ async function renderLibraryList() {
     actions.appendChild(miniBtn("Duplicar versión", () => duplicateScript(script.id)));
     actions.appendChild(miniBtn("Exportar", () => exportSingleScript(script)));
     actions.appendChild(miniBtn("Eliminar", () => removeScript(script.id)));
+
     div.appendChild(actions);
     list.appendChild(div);
   });
@@ -812,7 +865,9 @@ async function renderLibraryList() {
 
 async function renderLibraryIfOpen() {
   const modal = document.getElementById("libraryModal");
-  if (modal.style.display === "flex") await renderLibraryList();
+  if (modal.style.display === "flex") {
+    await renderLibraryList();
+  }
 }
 
 async function openScript(id) {
@@ -821,8 +876,18 @@ async function openScript(id) {
 
   if (!script.project.location) {
     script.project.location = "Lima, Perú";
-    await putScript(script);
   }
+  if (script.project.email === undefined) {
+    script.project.email = "";
+  }
+  if (script.project.phone === undefined) {
+    script.project.phone = "";
+  }
+  if (script.project.contactNotes === undefined) {
+    script.project.contactNotes = "";
+  }
+
+  await putScript(script);
 
   appState.currentScript = script;
   renderApp();
@@ -836,8 +901,9 @@ async function removeScript(id) {
 
   if (appState.currentScript && appState.currentScript.id === id) {
     const remaining = await getAllScripts();
-    if (remaining.length) appState.currentScript = remaining[0];
-    else {
+    if (remaining.length) {
+      appState.currentScript = remaining[0];
+    } else {
       appState.currentScript = createNewScriptShell();
       await putScript(appState.currentScript);
     }
@@ -871,12 +937,15 @@ function exportSingleScript(script) {
 }
 
 function exportCurrentScriptJSON() {
+  closeExportMenu();
   if (!appState.currentScript) return;
   exportSingleScript(appState.currentScript);
 }
 
 async function exportLibraryJSON() {
+  closeExportMenu();
   const scripts = await getAllScripts();
+
   const payload = {
     app: "Script Maker for Creative Dummies",
     version: 1,
@@ -895,25 +964,73 @@ async function importLibraryJSON(file) {
   const text = await file.text();
   const payload = JSON.parse(text);
 
-  if (!payload || !Array.isArray(payload.scripts)) {
-    alert("El archivo no parece una biblioteca válida.");
+  // Caso 1: biblioteca completa
+  if (payload && Array.isArray(payload.scripts)) {
+    const shouldReplace = confirm("Aceptar = reemplazar biblioteca actual. Cancelar = fusionar con la importada.");
+    if (shouldReplace) {
+      await replaceLibrary(payload.scripts);
+    } else {
+      await mergeLibrary(payload.scripts);
+    }
+
+    const scripts = await getAllScripts();
+    appState.currentScript = scripts[0] || createNewScriptShell();
+    if (!scripts.length) {
+      await putScript(appState.currentScript);
+    }
+
+    renderApp();
+    await renderLibraryList();
     return;
   }
 
-  const shouldReplace = confirm("Aceptar = reemplazar biblioteca actual. Cancelar = fusionar con la importada.");
-  if (shouldReplace) await replaceLibrary(payload.scripts);
-  else await mergeLibrary(payload.scripts);
+  // Caso 2: guion individual
+  if (payload && payload.project && Array.isArray(payload.scenes)) {
+    const scriptToImport = structuredClone(payload);
 
-  const scripts = await getAllScripts();
-  appState.currentScript = scripts[0] || createNewScriptShell();
-  if (!scripts.length) await putScript(appState.currentScript);
+    if (!scriptToImport.id) {
+      scriptToImport.id = crypto.randomUUID();
+    } else {
+      const existing = await getScript(scriptToImport.id);
+      if (existing) {
+        scriptToImport.id = crypto.randomUUID();
+      }
+    }
 
-  renderApp();
-  await renderLibraryList();
+    const now = new Date().toISOString();
+    scriptToImport.createdAt = scriptToImport.createdAt || now;
+    scriptToImport.updatedAt = now;
+
+    if (!scriptToImport.project.location) {
+      scriptToImport.project.location = "Lima, Perú";
+    }
+    if (scriptToImport.project.email === undefined) {
+      scriptToImport.project.email = "";
+    }
+    if (scriptToImport.project.phone === undefined) {
+      scriptToImport.project.phone = "";
+    }
+    if (scriptToImport.project.contactNotes === undefined) {
+      scriptToImport.project.contactNotes = "";
+    }
+
+    await putScript(scriptToImport);
+    appState.currentScript = scriptToImport;
+
+    renderApp();
+    await renderLibraryList();
+    closeLibraryModal();
+    setSaveStatus("Guardado", "ok");
+    return;
+  }
+
+  alert("El archivo no parece un JSON válido de guion ni de biblioteca.");
 }
 
 function exportTXT() {
+  closeExportMenu();
   if (!appState.currentScript) return;
+
   let out = "";
   const p = appState.currentScript.project;
 
@@ -923,6 +1040,7 @@ function exportTXT() {
   appState.currentScript.scenes.forEach((scene, i) => {
     out += `${i + 1}. ${headingString(scene)}\n\n`;
     out += (scene.description || "") + "\n\n";
+
     scene.blocks.forEach(block => {
       if (block.type === "action") out += (block.text || "") + "\n";
       if (block.type === "character") out += [block.name, block.suffix].filter(Boolean).join(" ") + "\n";
@@ -930,6 +1048,7 @@ function exportTXT() {
       if (block.type === "parenthetical") out += (block.text || "") + "\n";
       if (block.type === "transition") out += (block.value || "") + "\n";
     });
+
     out += "\n";
   });
 
@@ -953,23 +1072,31 @@ async function bootstrap() {
     const scripts = await getAllScripts();
 
     if (scripts.length) {
-
       if (!scripts[0].project.location) {
         scripts[0].project.location = "Lima, Perú";
-        await putScript(scripts[0]);
+      }
+      if (scripts[0].project.email === undefined) {
+        scripts[0].project.email = "";
+      }
+      if (scripts[0].project.phone === undefined) {
+        scripts[0].project.phone = "";
+      }
+      if (scripts[0].project.contactNotes === undefined) {
+        scripts[0].project.contactNotes = "";
+      }
+
+      await putScript(scripts[0]);
+
+      appState.currentScript = scripts[0];
+      renderApp();
+      setSaveStatus("Guardado", "ok");
+    } else {
+      appState.currentScript = createNewScriptShell();
+      await putScript(appState.currentScript);
+      renderApp();
+      setSaveStatus("Guardado", "ok");
+      openProjectModal(true);
     }
-
-    appState.currentScript = scripts[0];
-    renderApp();
-    setSaveStatus("Guardado", "ok");
-
-} else {
-  appState.currentScript = createNewScriptShell();
-  await putScript(appState.currentScript);
-  renderApp();
-  setSaveStatus("Guardado", "ok");
-  openProjectModal(true);
-}
   } catch (err) {
     console.error(err);
     setSaveStatus("No se pudo abrir la base local", "warn");
@@ -980,6 +1107,15 @@ async function bootstrap() {
     if (!file) return;
     await importLibraryJSON(file);
     e.target.value = "";
+  });
+
+  document.addEventListener("click", (e) => {
+    const wrap = document.querySelector(".menu-wrap");
+    const menu = document.getElementById("exportMenu");
+    if (!wrap || !menu) return;
+    if (!wrap.contains(e.target)) {
+      menu.classList.remove("open");
+    }
   });
 }
 
