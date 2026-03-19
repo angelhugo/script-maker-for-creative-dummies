@@ -369,24 +369,36 @@ function openProjectModal(isNew = false) {
   projectDraft.date = formatDateToDDMMYYYY(projectDraft.date);
   document.getElementById("projectModalTitle").textContent = isNew ? "Nuevo proyecto" : "Proyecto";
 
-  const body = document.getElementById("projectModalBody");
-  body.innerHTML = `
-    <div class="section">
-      <div class="section-title">Datos del proyecto</div>
-      <div class="grid2">
-        <input id="pTitle" class="field" placeholder="Título del proyecto" value="${escapeHtml(projectDraft.title)}">
-        <input id="pAuthor" class="field" placeholder="Autor" value="${escapeHtml(projectDraft.author)}">
-        <input id="pBasedOn" class="field" placeholder="Basado en / creado por (opcional)" value="${escapeHtml(projectDraft.basedOn)}">
-        <input id="pContact" class="field" placeholder="Correo o contacto (opcional)" value="${escapeHtml(projectDraft.contact)}">
-        <input id="pVersion" class="field" placeholder="Versión (ej: Draft 2)" value="${escapeHtml(projectDraft.version)}">
-        <input id="pDate" class="field" placeholder="Fecha" value="${escapeHtml(projectDraft.date)}">
-        <input id="pLocation" class="field" placeholder="Localidad" value="${escapeHtml(projectDraft.location || "")}">
-      </div>
-      <div class="section" style="margin-top:12px;">
-        <textarea id="pNotes" placeholder="Logline o nota breve (opcional)">${escapeHtml(projectDraft.notes)}</textarea>
-      </div>
+const body = document.getElementById("projectModalBody");
+body.innerHTML = `
+  <div class="section">
+    <div class="section-title">Datos del proyecto</div>
+    <div class="help">Estos datos aparecen en el bloque principal de la carátula.</div>
+    <div class="grid2">
+      <input id="pTitle" class="field" placeholder="Título del proyecto" value="${escapeHtml(projectDraft.title)}">
+      <input id="pAuthor" class="field" placeholder="Autor" value="${escapeHtml(projectDraft.author)}">
+      <input id="pBasedOn" class="field" placeholder="Basado en / creado por (opcional)" value="${escapeHtml(projectDraft.basedOn)}">
+      <input id="pVersion" class="field" placeholder="Versión (ej: Draft 2)" value="${escapeHtml(projectDraft.version)}">
+      <input id="pDate" class="field" placeholder="Fecha" value="${escapeHtml(projectDraft.date)}">
+      <input id="pLocation" class="field" placeholder="Localidad" value="${escapeHtml(projectDraft.location || "")}">
     </div>
-  `;
+    <div class="section" style="margin-top:12px;">
+      <textarea id="pNotes" placeholder="Logline o nota breve (opcional)">${escapeHtml(projectDraft.notes)}</textarea>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Contacto para la carátula</div>
+    <div class="help">Estos datos aparecen en la parte inferior de la carátula.</div>
+    <div class="grid2">
+      <input id="pEmail" class="field" placeholder="autor@email.com" value="${escapeHtml(projectDraft.email || "")}">
+      <input id="pPhone" class="field" placeholder="+51 999 999 999" value="${escapeHtml(projectDraft.phone || "")}">
+    </div>
+    <div class="section" style="margin-top:12px;">
+      <input id="pContactNotes" class="field" placeholder="Representación o información adicional (opcional)" value="${escapeHtml(projectDraft.contactNotes || "")}">
+    </div>
+  </div>
+`;
   document.getElementById("projectModal").style.display = "flex";
 }
 
@@ -399,10 +411,12 @@ async function saveProjectModal() {
   projectDraft.title = document.getElementById("pTitle").value.trim();
   projectDraft.author = document.getElementById("pAuthor").value.trim();
   projectDraft.basedOn = document.getElementById("pBasedOn").value.trim();
-  projectDraft.contact = document.getElementById("pContact").value.trim();
   projectDraft.version = document.getElementById("pVersion").value.trim();
   projectDraft.date = formatDateToDDMMYYYY(document.getElementById("pDate").value.trim());
   projectDraft.location = document.getElementById("pLocation").value.trim();
+  projectDraft.email = document.getElementById("pEmail").value.trim();
+  projectDraft.phone = document.getElementById("pPhone").value.trim();
+  projectDraft.contactNotes = document.getElementById("pContactNotes").value.trim();
   projectDraft.notes = document.getElementById("pNotes").value.trim();
 
   if (!appState.currentScript) appState.currentScript = createNewScriptShell();
