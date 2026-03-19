@@ -73,9 +73,10 @@ function renderWritingModeButton() {
   const btn = document.getElementById("writingModeBtn");
   if (!btn) return;
 
-  btn.textContent = appState.writingMode ? "Focus: ON" : "Focus: OFF";
+  btn.textContent = appState.writingMode ? "FOCUS: ON" : "FOCUS: OFF";
   btn.className = appState.writingMode ? "toggle-on" : "toggle-off";
 }
+
 
 function renderTopbarTitle() {
   const el = document.getElementById("topbarScriptTitle");
