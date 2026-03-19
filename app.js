@@ -1,3 +1,5 @@
+const DEFAULT_TITLE = "Sin título";
+
 let appState = {
   currentScript: null,
   writingMode: false
@@ -83,7 +85,7 @@ function renderTopbarTitle() {
   if (el.dataset.editing === "true") return;
 
   const title = appState.currentScript?.project?.title?.trim();
-  el.textContent = title || "Sin título";
+  el.textContent = title || DEFAULT_TITLE;
   el.title = "Haz clic para editar el título";
   el.onclick = () => startTopbarTitleEdit();
 }
@@ -316,8 +318,8 @@ function renderTitlePage(container) {
 
   const title = document.createElement("div");
   title.className = "title";
-  title.textContent = p.title || "UNTITLED PROJECT";
-
+  title.textContent = p.title || DEFAULT_TITLE;
+  
   const byline = document.createElement("div");
   byline.className = "byline";
   byline.textContent = "por";
