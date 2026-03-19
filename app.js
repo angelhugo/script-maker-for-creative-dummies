@@ -221,10 +221,17 @@ function renderTitlePage(container) {
     ${p.version ? `Versión: ${escapeHtml(p.version)}<br>` : ""}
     ${p.date ? `Fecha: ${escapeHtml(p.date)}<br>` : ""}
     ${p.location ? `${escapeHtml(p.location)}<br>` : ""}
-    ${p.contact ? `Contacto: ${escapeHtml(p.contact)}<br>` : ""}
     ${p.notes ? `<br>${escapeHtml(p.notes)}` : ""}
   `;
-  
+
+  const contactBox = document.createElement("div");
+  contactBox.className = "title-contact";
+  contactBox.innerHTML = `
+    ${p.email ? `${escapeHtml(p.email)}<br>` : ""}
+    ${p.phone ? `${escapeHtml(p.phone)}<br>` : ""}
+    ${p.contactNotes ? `${escapeHtml(p.contactNotes)}` : ""}
+  `;
+
   const center = document.createElement("div");
   center.className = "title-center";
   
@@ -235,6 +242,7 @@ function renderTitlePage(container) {
   
   titlePage.appendChild(actions);
   titlePage.appendChild(center);
+  titlePage.appendChild(contactBox);
   
   page.appendChild(titlePage);
   shell.appendChild(meta);
