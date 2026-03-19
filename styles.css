@@ -54,12 +54,22 @@ button.toggle-off{
   border-color:rgba(255,255,255,.35);
 }
 
-/* ---------------- TOPBAR ---------------- */
+#writingModeBtn{
+  width:124px;
+  min-width:124px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:600;
+}
+
+/* TOPBAR */
 
 .topbar{
   display:flex;
   align-items:center;
   justify-content:space-between;
+  gap:18px;
   padding:6px 16px;
   background:#111827;
   color:#fff;
@@ -74,7 +84,6 @@ button.toggle-off{
   display:flex;
   flex-direction:column;
   line-height:1.05;
-  flex:0 0 auto;
 }
 
 .logo strong{
@@ -107,37 +116,21 @@ button.toggle-off{
 
 .toolbar-title{
   position:absolute;
-  left:50%;
+  left:calc(50% - 20px);
   transform:translateX(-50%);
   width:8.5in;
   max-width:100%;
   text-align:center;
-
   font-size:13px;
   font-weight:600;
   letter-spacing:.02em;
-
-  letter-spacing:.03em;
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
   pointer-events:none;
 }
 
-/* Focus button */
-
-#writingModeBtn{
-  width:124px;
-  min-width:124px;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
-  font-weight:600;
-  white-space:nowrap;
-}
-
-/* Export dropdown */
+/* EXPORT MENU */
 
 .menu-wrap{position:relative}
 
@@ -166,7 +159,7 @@ button.toggle-off{
   text-align:left;
 }
 
-/* ---------------- WORKSPACE ---------------- */
+/* WORKSPACE */
 
 .workspace{
   display:grid;
@@ -188,7 +181,6 @@ button.toggle-off{
 .muted{
   font-size:12px;
   color:var(--muted);
-  line-height:1.4;
 }
 
 .status-line{
@@ -200,7 +192,7 @@ button.toggle-off{
 .status-line.ok{color:var(--ok)}
 .status-line.warn{color:var(--warn)}
 
-/* ---------------- PAGE VIEW ---------------- */
+/* PAGE */
 
 .canvas-wrap{
   display:flex;
@@ -250,7 +242,7 @@ button.toggle-off{
   min-height:9in;
 }
 
-/* ---------------- TITLE PAGE ---------------- */
+/* TITLE PAGE */
 
 .title-page{
   position:relative;
@@ -305,7 +297,7 @@ button.toggle-off{
   gap:8px;
 }
 
-/* ---------------- SCENES ---------------- */
+/* SCENES */
 
 .scene-block{
   position:relative;
@@ -348,7 +340,7 @@ button.toggle-off{
 .sp-parenthetical{margin-left:1.7in;max-width:3in}
 .sp-transition{text-transform:uppercase;text-align:right;margin-left:4in;max-width:1.7in}
 
-/* ---------------- ADD SCENE ---------------- */
+/* ADD SCENE */
 
 .add-scene{
   border:2px dashed #cbd5e1;
@@ -362,7 +354,7 @@ button.toggle-off{
 
 .add-scene:hover{background:#f3f4f6}
 
-/* ---------------- MODALS ---------------- */
+/* MODALS */
 
 .modal-overlay{
   position:fixed;
@@ -397,7 +389,6 @@ button.toggle-off{
   margin-top:12px;
   display:flex;
   justify-content:space-between;
-  align-items:center;
 }
 
 .section{margin-bottom:18px}
@@ -410,7 +401,6 @@ button.toggle-off{
 .help{
   font-size:12px;
   color:var(--muted);
-  margin-bottom:8px;
 }
 
 .block{
@@ -442,10 +432,9 @@ button.toggle-off{
 .inline-help{
   font-size:11px;
   color:var(--muted);
-  margin-top:6px;
 }
 
-/* ---------------- RESPONSIVE ---------------- */
+/* RESPONSIVE */
 
 @media (max-width:1500px){
 
@@ -464,13 +453,14 @@ button.toggle-off{
 @media (max-width:900px){
 
   .toolbar{
-    grid-template-columns:1fr;
+    flex-direction:column;
     gap:8px;
   }
 
   .toolbar-title{
+    position:static;
+    transform:none;
     width:100%;
-    text-align:left;
   }
 
   .grid2,.grid3{
