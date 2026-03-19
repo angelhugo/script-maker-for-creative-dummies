@@ -451,15 +451,21 @@ button.toggle-off{
 
 @media (max-width:900px){
 
+  .topbar{
+    grid-template-columns:1fr;
+    gap:8px;
+  }
+
   .toolbar{
-    flex-direction:column;
+    grid-column:auto;
+    grid-template-columns:1fr;
     gap:8px;
   }
 
   .toolbar-title{
-    position:static;
-    transform:none;
     width:100%;
+    text-align:left;
+    pointer-events:auto;
   }
 
   .grid2,.grid3{
