@@ -159,6 +159,7 @@ button.toggle-off{background:#fff;color:#111827}
   padding:0 40px;
   position:relative;
   cursor:pointer;
+  font-family:"Courier New", Courier, monospace;
 }
 
 .title-page:hover{
