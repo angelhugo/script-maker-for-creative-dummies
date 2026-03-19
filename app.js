@@ -754,6 +754,12 @@ async function renderLibraryIfOpen() {
 async function openScript(id) {
   const script = await getScript(id);
   if (!script) return;
+
+  if (!script.project.location) {
+    script.project.location = "Lima, Perú";
+    await putScript(script);
+  }
+
   appState.currentScript = script;
   renderApp();
   closeLibraryModal();
@@ -883,16 +889,23 @@ async function bootstrap() {
     const scripts = await getAllScripts();
 
     if (scripts.length) {
-      appState.currentScript = scripts[0];
-      renderApp();
-      setSaveStatus("Guardado", "ok");
-    } else {
-      appState.currentScript = createNewScriptShell();
-      await putScript(appState.currentScript);
-      renderApp();
-      setSaveStatus("Guardado", "ok");
-      openProjectModal(true);
+
+      if (!scripts[0].project.location) {
+        scripts[0].project.location = "Lima, Perú";
+        await putScript(scripts[0]);
     }
+
+    appState.currentScript = scripts[0];
+    renderApp();
+    setSaveStatus("Guardado", "ok");
+
+} else {
+  appState.currentScript = createNewScriptShell();
+  await putScript(appState.currentScript);
+  renderApp();
+  setSaveStatus("Guardado", "ok");
+  openProjectModal(true);
+}
   } catch (err) {
     console.error(err);
     setSaveStatus("No se pudo abrir la base local", "warn");
