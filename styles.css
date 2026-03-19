@@ -68,8 +68,27 @@ button.toggle-off{
   z-index:30;
 }
 
-.topbar strong{font-size:15px}
-.topbar small{font-size:11px;opacity:.9}
+/* LOGO */
+
+.logo{
+  display:flex;
+  flex-direction:column;
+  line-height:1.05;
+  flex:0 0 auto;
+}
+
+.logo strong{
+  font-size:15px;
+  white-space:nowrap;
+}
+
+.logo span{
+  font-size:11px;
+  opacity:.9;
+  white-space:nowrap;
+}
+
+/* TOOLBAR */
 
 .toolbar{
   display:grid;
@@ -98,7 +117,7 @@ button.toggle-off{
   text-overflow:ellipsis;
 }
 
-/* Focus button fixed width */
+/* Focus button */
 
 #writingModeBtn{
   width:124px;
