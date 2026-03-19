@@ -595,3 +595,7 @@ button.toggle-off{
   color:#9ca3af;
   font-style:italic;
 }
+.topbar-title-input::placeholder{
+  color:#9ca3af;
+  font-style:italic;
+}
