@@ -85,7 +85,14 @@ function renderTopbarTitle() {
   if (el.dataset.editing === "true") return;
 
   const title = appState.currentScript?.project?.title?.trim();
-  el.textContent = title || DEFAULT_TITLE;
+  
+  if (!title) {
+    el.textContent = DEFAULT_TITLE;
+    el.classList.add("placeholder-title");
+  } else {
+    el.textContent = title;
+    el.classList.remove("placeholder-title");
+  }
   el.title = "Haz clic para editar el título";
   el.onclick = () => startTopbarTitleEdit();
 }
