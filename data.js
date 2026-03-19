@@ -40,6 +40,7 @@ function createEmptyProject() {
     contact: "",
     version: "Draft 1",
     date: today,
+    location: "Lima, Perú",
     notes: ""
   };
 }
