@@ -160,6 +160,28 @@ button.toggle-off{background:#fff;color:#111827}
   position:relative;
   cursor:pointer;
   font-family:"Courier New", Courier, monospace;
+  line-height:1.6;
+}
+
+.title-page .title{
+  font-size:28px;
+  font-weight:bold;
+  text-transform:uppercase;
+  margin-bottom:40px;
+}
+
+.title-page .byline{
+  margin-bottom:10px;
+}
+
+.title-page .author{
+  font-size:18px;
+  margin-bottom:60px;
+}
+
+.title-page .meta{
+  font-size:14px;
+  line-height:1.8;
 }
 
 .title-page:hover{
