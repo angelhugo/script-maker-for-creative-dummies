@@ -15,17 +15,28 @@
     </div>
 
     <div class="toolbar">
-      <button onclick="handleNewScript()">Nuevo</button>
-      <button onclick="openLibraryModal()">Mis guiones</button>
-      <button onclick="openProjectModal()">Proyecto</button>
-      <button id="writingModeBtn" class="toggle-off" onclick="toggleWritingMode()">Modo escritura: OFF</button>
-      <span id="writingModeHelp" class="writing-mode-help">
-        Modo normal: el modal no recentra el bloque activo.
-      </span>
-      <button onclick="exportCurrentScriptJSON()">Exportar JSON</button>
-      <button onclick="exportTXT()">Exportar TXT</button>
-      <button onclick="window.print()">PDF</button>
+      <div class="toolbar-group">
+        <button onclick="handleNewScript()">Nuevo</button>
+        <button onclick="openLibraryModal()">Mis guiones</button>
+      </div>
+
+      <div class="toolbar-title" id="topbarScriptTitle">Sin título</div>
+
+      <div class="toolbar-group">
+        <button id="writingModeBtn" class="toggle-off" onclick="toggleWritingMode()">✍️ Focus</button>
+
+        <div class="menu-wrap">
+          <button id="exportMenuBtn" onclick="toggleExportMenu()">Exportar ▾</button>
+          <div id="exportMenu" class="menu-dropdown">
+            <button onclick="exportTXT()">Exportar TXT</button>
+            <button onclick="window.print()">Exportar PDF</button>
+            <button onclick="exportCurrentScriptJSON()">Exportar guion JSON</button>
+            <button onclick="exportLibraryJSON()">Exportar biblioteca JSON</button>
+          </div>
+        </div>
+      </div>
     </div>
+
   </header>
 
   <main class="workspace">
