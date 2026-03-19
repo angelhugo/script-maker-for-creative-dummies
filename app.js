@@ -395,6 +395,7 @@ async function saveProjectModal() {
   projectDraft.contact = document.getElementById("pContact").value.trim();
   projectDraft.version = document.getElementById("pVersion").value.trim();
   projectDraft.date = formatDateToDDMMYYYY(document.getElementById("pDate").value.trim());
+  projectDraft.location = document.getElementById("pLocation").value.trim();
   projectDraft.notes = document.getElementById("pNotes").value.trim();
 
   if (!appState.currentScript) appState.currentScript = createNewScriptShell();
