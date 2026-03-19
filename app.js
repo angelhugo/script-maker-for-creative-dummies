@@ -373,6 +373,7 @@ function openProjectModal(isNew = false) {
         <input id="pContact" class="field" placeholder="Correo o contacto (opcional)" value="${escapeHtml(projectDraft.contact)}">
         <input id="pVersion" class="field" placeholder="Versión (ej: Draft 2)" value="${escapeHtml(projectDraft.version)}">
         <input id="pDate" class="field" placeholder="Fecha" value="${escapeHtml(projectDraft.date)}">
+        <input id="pLocation" class="field" placeholder="Localidad" value="${escapeHtml(projectDraft.location || "")}">
       </div>
       <div class="section" style="margin-top:12px;">
         <textarea id="pNotes" placeholder="Logline o nota breve (opcional)">${escapeHtml(projectDraft.notes)}</textarea>
