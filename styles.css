@@ -590,3 +590,8 @@ button.toggle-off{
     grid-template-columns:1fr;
   }
 }
+
+.placeholder-title{
+  color:#9ca3af;
+  font-style:italic;
+}
