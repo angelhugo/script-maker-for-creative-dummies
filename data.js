@@ -31,7 +31,8 @@ const GLOSSARY = [
 ];
 
 function createEmptyProject() {
-  const today = new Date().toISOString().slice(0, 10);
+  const now = new Date();
+  const today = `${String(now.getDate()).padStart(2, "0")}-${String(now.getMonth() + 1).padStart(2, "0")}-${now.getFullYear()}`;
   return {
     title: "",
     author: "",
