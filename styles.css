@@ -200,6 +200,16 @@ button.toggle-off{background:#fff;color:#111827}
   z-index:5;
 }
 
+.title-contact{
+  position:absolute;
+  left:0;
+  bottom:0;
+  text-align:left;
+  font-size:14px;
+  line-height:1.6;
+  max-width:3in;
+}
+
 .title-page .title{
   font-size:28px;
   font-weight:bold;
