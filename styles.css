@@ -116,14 +116,16 @@ button.toggle-off{
 
 .toolbar-title{
   position:absolute;
-  left:calc(50% - 20px);
+  left:calc(50% + 120px);
   transform:translateX(-50%);
   width:8.5in;
   max-width:100%;
   text-align:center;
+
   font-size:13px;
   font-weight:600;
   letter-spacing:.02em;
+
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
