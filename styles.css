@@ -205,9 +205,10 @@ button.toggle-off{background:#fff;color:#111827}
   left:0;
   bottom:0;
   text-align:left;
-  font-size:14px;
-  line-height:1.6;
+  font-size:13px;
+  line-height:1.5;
   max-width:3in;
+  opacity:.9;
 }
 
 .title-page .title{
