@@ -117,7 +117,7 @@ button.toggle-off{
 
 .toolbar-title{
   position:absolute;
-  left:calc(50% - 24px);
+  left:calc(50% - 30px);
   transform:translateX(-50%);
   width:8.5in;
   max-width:100%;
