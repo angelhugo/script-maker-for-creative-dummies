@@ -100,31 +100,36 @@ button.toggle-off{
 }
 
 .toolbar{
+  position:relative;
   display:flex;
-  gap:12px;
   align-items:center;
-  flex-wrap:wrap;
-  width:100%;
   justify-content:space-between;
+  width:100%;
+  min-height:40px;
 }
 
 .toolbar-group{
   display:flex;
   gap:8px;
   align-items:center;
-  flex-wrap:wrap;
+  flex-wrap:nowrap;
+  position:relative;
+  z-index:2;
 }
 
 .toolbar-title{
-  flex:1;
-  min-width:160px;
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%);
+  max-width:320px;
   text-align:center;
   font-weight:bold;
   letter-spacing:.03em;
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
-  padding:0 12px;
+  z-index:1;
+  pointer-events:none;
 }
 
 .menu-wrap{
@@ -657,13 +662,18 @@ select{
   }
 
   .toolbar{
+    flex-wrap:wrap;
     justify-content:flex-start;
+    gap:8px;
   }
 
   .toolbar-title{
-    order:3;
+    position:static;
+    transform:none;
+    max-width:none;
     width:100%;
     text-align:left;
-    padding:0;
+    order:3;
+    pointer-events:auto;
   }
 }
