@@ -39,13 +39,13 @@ button.toggle-off{background:#fff;color:#111827}
   display:flex;
   justify-content:space-between;
   align-items:center;
-  padding:14px 18px;
+  padding:8px 16px;
   background:#111827;
   color:#fff;
   position:sticky;
   top:0;
   z-index:30;
-  gap:12px;
+  gap:10px;
   flex-wrap:wrap;
 }
 
@@ -538,4 +538,19 @@ button.toggle-off{background:#fff;color:#111827}
     text-align:left;
     padding:0;
   }
+  .topbar > div:first-child{
+  line-height:1.1;
+}
+
+.topbar > div:first-child strong{
+  font-size:15px;
+}
+
+.topbar > div:first-child small{
+  font-size:11px;
+  opacity:.9;
+}
+  .topbar button{
+  padding:6px 10px;
+}
 }
