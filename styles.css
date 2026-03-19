@@ -124,14 +124,16 @@ button.toggle-off{
   transform:translateX(-50%);
   width:min(8.5in,100%);
   text-align:center;
+
   font-size:13px;
   font-weight:600;
   letter-spacing:.02em;
+
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
+
   pointer-events:none;
-  z-index:1;
 }
 
 /* EXPORT MENU */
