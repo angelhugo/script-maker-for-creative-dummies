@@ -120,7 +120,7 @@ button.toggle-off{
 
 .toolbar-title{
   position:absolute;
-  left:46%;
+  left:44.5%;
   transform:translateX(-50%);
   width:min(8.5in,100%);
   text-align:center;
