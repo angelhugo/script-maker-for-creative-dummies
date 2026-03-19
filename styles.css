@@ -56,11 +56,6 @@ button.toggle-off{background:#fff;color:#111827}
   flex-wrap:wrap;
 }
 
-.writing-mode-help{
-  font-size:12px;
-  color:#d1d5db;
-}
-
 .workspace{
   display:grid;
   grid-template-columns:minmax(220px,240px) minmax(0,1fr) minmax(240px,280px);
@@ -460,4 +455,87 @@ button.toggle-off{background:#fff;color:#111827}
 
 @media (max-width:900px){
   .grid2,.grid3{grid-template-columns:1fr}
+}
+
+.toolbar{
+  display:flex;
+  gap:12px;
+  align-items:center;
+  flex-wrap:wrap;
+  width:100%;
+  justify-content:space-between;
+}
+
+.toolbar-group{
+  display:flex;
+  gap:8px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+
+.toolbar-title{
+  flex:1;
+  min-width:160px;
+  text-align:center;
+  font-weight:bold;
+  letter-spacing:.03em;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  padding:0 12px;
+}
+
+.menu-wrap{
+  position:relative;
+}
+
+.menu-dropdown{
+  position:absolute;
+  top:calc(100% + 8px);
+  right:0;
+  min-width:220px;
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:12px;
+  box-shadow:0 10px 30px rgba(0,0,0,.12);
+  padding:8px;
+  display:none;
+  z-index:100;
+}
+
+.menu-dropdown.open{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+.menu-dropdown button{
+  width:100%;
+  text-align:left;
+}
+
+#writingModeBtn.toggle-on{
+  background:#fff;
+  color:#111827;
+  border-color:#fff;
+  font-weight:bold;
+}
+
+#writingModeBtn.toggle-off{
+  background:transparent;
+  color:#fff;
+  border-color:rgba(255,255,255,.35);
+}
+
+@media (max-width:900px){
+  .toolbar{
+    justify-content:flex-start;
+  }
+
+  .toolbar-title{
+    order:3;
+    width:100%;
+    text-align:left;
+    padding:0;
+  }
 }
