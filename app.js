@@ -225,12 +225,17 @@ function renderTitlePage(container) {
     ${p.notes ? `<br>${escapeHtml(p.notes)}` : ""}
   `;
   
+  const center = document.createElement("div");
+  center.className = "title-center";
+  
+  center.appendChild(title);
+  center.appendChild(byline);
+  center.appendChild(author);
+  center.appendChild(metaBox);
+  
   titlePage.appendChild(actions);
-  titlePage.appendChild(title);
-  titlePage.appendChild(byline);
-  titlePage.appendChild(author);
-  titlePage.appendChild(metaBox);
-
+  titlePage.appendChild(center);
+  
   page.appendChild(titlePage);
   shell.appendChild(meta);
   shell.appendChild(page);
