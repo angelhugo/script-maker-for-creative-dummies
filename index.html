@@ -58,8 +58,15 @@
   </main>
 
   <div id="libraryModal" class="modal-overlay">
-    <div class="modal large">
+    <div class="modal">
       <h2>Mis guiones</h2>
+  
+      <p class="muted">
+        Tus guiones se guardan localmente en este navegador. 
+        Si quieres conservarlos fuera de este dispositivo, exporta una copia de seguridad.
+      </p>
+  
+      <div id="libraryList"></div>
       <div class="modal-toolbar">
         <button class="primary" onclick="handleNewScript()">+ Nuevo guion</button>
         <button onclick="exportLibraryJSON()">Exportar biblioteca</button>
