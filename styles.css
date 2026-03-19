@@ -91,12 +91,12 @@ button.toggle-off{
 /* TOOLBAR */
 
 .toolbar{
-  display:grid;
-  grid-template-columns:auto 1fr auto;
+  position:relative;
+  display:flex;
   align-items:center;
+  justify-content:space-between;
   width:100%;
   min-height:36px;
-  gap:12px;
 }
 
 .toolbar-group{
@@ -106,15 +106,21 @@ button.toggle-off{
 }
 
 .toolbar-title{
-  justify-self:center;
-  width:min(8.5in,100%);
-  max-width:420px;
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%);
+  width:8.5in;
+  max-width:100%;
   text-align:center;
-  font-weight:bold;
+
+  font-size:13px;
+  font-weight:600;
+
   letter-spacing:.03em;
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
+  pointer-events:none;
 }
 
 /* Focus button */
