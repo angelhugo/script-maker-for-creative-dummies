@@ -109,7 +109,12 @@ function startTopbarTitleEdit() {
 
   const input = document.createElement("input");
   input.type = "text";
-  input.value = currentTitle;
+  if (!currentTitle) {
+    input.value = "";
+  } else {
+    input.value = currentTitle;
+  }
+  input.placeholder = DEFAULT_TITLE;
   input.className = "topbar-title-input";
   input.placeholder = "Sin título";
 
