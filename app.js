@@ -27,6 +27,26 @@ function clone(obj) {
   return JSON.parse(JSON.stringify(obj));
 }
 
+function formatDateToDDMMYYYY(value) {
+  if (!value) return "";
+
+  if (/^\d{2}-\d{2}-\d{4}$/.test(value)) return value;
+
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    const [y, m, d] = value.split("-");
+    return `${d}-${m}-${y}`;
+  }
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = date.getFullYear();
+
+  return `${day}-${month}-${year}`;
+}
+
 function touchCurrentScript() {
   if (!appState.currentScript) return;
   appState.currentScript.updatedAt = new Date().toISOString();
@@ -339,6 +359,7 @@ function deleteScene(id) {
 
 function openProjectModal(isNew = false) {
   projectDraft = clone(appState.currentScript ? appState.currentScript.project : createEmptyProject());
+  projectDraft.date = formatDateToDDMMYYYY(projectDraft.date);
   document.getElementById("projectModalTitle").textContent = isNew ? "Nuevo proyecto" : "Proyecto";
 
   const body = document.getElementById("projectModalBody");
@@ -372,7 +393,7 @@ async function saveProjectModal() {
   projectDraft.basedOn = document.getElementById("pBasedOn").value.trim();
   projectDraft.contact = document.getElementById("pContact").value.trim();
   projectDraft.version = document.getElementById("pVersion").value.trim();
-  projectDraft.date = document.getElementById("pDate").value.trim();
+  projectDraft.date = formatDateToDDMMYYYY(document.getElementById("pDate").value.trim());
   projectDraft.notes = document.getElementById("pNotes").value.trim();
 
   if (!appState.currentScript) appState.currentScript = createNewScriptShell();
