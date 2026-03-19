@@ -37,10 +37,12 @@ function createEmptyProject() {
     title: "",
     author: "",
     basedOn: "",
-    contact: "",
     version: "Draft 1",
     date: today,
     location: "Lima, Perú",
+    email: "",
+    phone: "",
+    contactNotes: "",
     notes: ""
   };
 }
