@@ -220,10 +220,11 @@ function renderTitlePage(container) {
     ${p.basedOn ? `Basado en: ${escapeHtml(p.basedOn)}<br>` : ""}
     ${p.version ? `Versión: ${escapeHtml(p.version)}<br>` : ""}
     ${p.date ? `Fecha: ${escapeHtml(p.date)}<br>` : ""}
+    ${p.location ? `Localidad: ${escapeHtml(p.location)}<br>` : ""}
     ${p.contact ? `Contacto: ${escapeHtml(p.contact)}<br>` : ""}
     ${p.notes ? `<br>${escapeHtml(p.notes)}` : ""}
   `;
-
+  
   titlePage.appendChild(actions);
   titlePage.appendChild(title);
   titlePage.appendChild(byline);
