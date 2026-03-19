@@ -70,17 +70,53 @@ function scheduleAutosave() {
 
 function renderWritingModeButton() {
   const btn = document.getElementById("writingModeBtn");
-  const help = document.getElementById("writingModeHelp");
-  btn.textContent = `Modo escritura: ${appState.writingMode ? "ON" : "OFF"}`;
+  if (!btn) return;
+  btn.textContent = appState.writingMode ? "✍️ Focus activado" : "✍️ Focus";
   btn.className = appState.writingMode ? "toggle-on" : "toggle-off";
-  help.textContent = appState.writingMode
-    ? "Modo escritura: el bloque activo del modal se recentra y se resalta."
-    : "Modo normal: el modal no recentra el bloque activo.";
+}
+
+function renderTopbarTitle() {
+  const el = document.getElementById("topbarScriptTitle");
+  if (!el) return;
+
+  const title = appState.currentScript?.project?.title?.trim();
+  el.textContent = title || "Sin título";
+}
+function toggleWritingMode() {
+  appState.writingMode = !appState.writingMode;
+  renderWritingModeButton();
+}
+
+function renderWritingModeButton() {
+  const btn = document.getElementById("writingModeBtn");
+  if (!btn) return;
+  btn.textContent = appState.writingMode ? "✍️ Focus activado" : "✍️ Focus";
+  btn.className = appState.writingMode ? "toggle-on" : "toggle-off";
+}
+
+function renderTopbarTitle() {
+  const el = document.getElementById("topbarScriptTitle");
+  if (!el) return;
+
+  const title = appState.currentScript?.project?.title?.trim();
+  el.textContent = title || "Sin título";
 }
 
 function toggleWritingMode() {
   appState.writingMode = !appState.writingMode;
   renderWritingModeButton();
+}
+
+function toggleExportMenu() {
+  const menu = document.getElementById("exportMenu");
+  if (!menu) return;
+  menu.classList.toggle("open");
+}
+
+function closeExportMenu() {
+  const menu = document.getElementById("exportMenu");
+  if (!menu) return;
+  menu.classList.remove("open");
 }
 
 function maybeTypewriter(element) {
@@ -349,6 +385,7 @@ function renderSceneList() {
 
 function renderApp() {
   renderWritingModeButton();
+  renderTopbarTitle();
   renderSceneList();
   renderPages();
   renderGlossary();
