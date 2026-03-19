@@ -66,10 +66,10 @@ button.toggle-off{
 /* TOPBAR */
 
 .topbar{
-  display:flex;
+  display:grid;
+  grid-template-columns:minmax(220px,240px) minmax(0,1fr) minmax(240px,280px);
   align-items:center;
-  justify-content:space-between;
-  gap:18px;
+  gap:16px;
   padding:6px 16px;
   background:#111827;
   color:#fff;
@@ -84,6 +84,7 @@ button.toggle-off{
   display:flex;
   flex-direction:column;
   line-height:1.05;
+  justify-self:start;
 }
 
 .logo strong{
@@ -100,12 +101,13 @@ button.toggle-off{
 /* TOOLBAR */
 
 .toolbar{
-  position:relative;
-  display:flex;
+  grid-column:2 / 4;
+  display:grid;
+  grid-template-columns:auto 1fr auto;
   align-items:center;
-  justify-content:space-between;
-  width:100%;
   min-height:36px;
+  gap:12px;
+  position:relative;
 }
 
 .toolbar-group{
@@ -115,23 +117,18 @@ button.toggle-off{
 }
 
 .toolbar-title{
-  position:absolute;
-  left:calc(50% + 120px);
-  transform:translateX(-50%);
-  width:8.5in;
+  justify-self:center;
+  width:min(8.5in,100%);
   max-width:100%;
   text-align:center;
-
   font-size:13px;
   font-weight:600;
   letter-spacing:.02em;
-
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
   pointer-events:none;
 }
-
 /* EXPORT MENU */
 
 .menu-wrap{position:relative}
