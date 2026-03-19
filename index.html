@@ -23,20 +23,19 @@
       <div class="toolbar-title" id="topbarScriptTitle">Sin título</div>
 
       <div class="toolbar-group">
-        <button id="writingModeBtn" class="toggle-off" onclick="toggleWritingMode()">✍️ Focus</button>
+        <button id="writingModeBtn" class="toggle-off" onclick="toggleWritingMode()">Focus: OFF</button>
 
         <div class="menu-wrap">
-          <button id="exportMenuBtn" onclick="toggleExportMenu()">Exportar ▾</button>
+          <button id="exportMenuBtn" type="button" onclick="toggleExportMenu()">Exportar ▾</button>
           <div id="exportMenu" class="menu-dropdown">
-            <button onclick="exportTXT()">Exportar TXT</button>
-            <button onclick="window.print()">Exportar PDF</button>
-            <button onclick="exportCurrentScriptJSON()">Exportar guion JSON</button>
-            <button onclick="exportLibraryJSON()">Exportar biblioteca JSON</button>
+            <button type="button" onclick="exportTXT()">Exportar TXT</button>
+            <button type="button" onclick="window.print()">Exportar PDF</button>
+            <button type="button" onclick="exportCurrentScriptJSON()">Exportar guion JSON</button>
+            <button type="button" onclick="exportLibraryJSON()">Exportar biblioteca JSON</button>
           </div>
         </div>
       </div>
     </div>
-
   </header>
 
   <main class="workspace">
@@ -67,11 +66,12 @@
       <div class="modal-toolbar">
         <button class="primary" onclick="handleNewScript()">+ Nuevo guion</button>
         <button onclick="exportLibraryJSON()">Exportar biblioteca</button>
-        <button onclick="document.getElementById('importLibraryInput').click()">Importar biblioteca</button>
+        <button onclick="document.getElementById('importLibraryInput').click()">Importar</button>
         <input id="importLibraryInput" type="file" accept=".json,application/json" hidden />
       </div>
       <div id="libraryList" class="library-list"></div>
       <div class="modal-actions">
+        <div></div>
         <button onclick="closeLibraryModal()">Cerrar</button>
       </div>
     </div>
