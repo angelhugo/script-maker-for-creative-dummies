@@ -150,17 +150,19 @@ button.toggle-off{background:#fff;color:#111827}
 }
 
 .title-page{
-  min-height:9in;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  text-align:center;
-  padding:0 40px;
   position:relative;
-  cursor:pointer;
+  width:100%;
+  height:9in;
   font-family:"Courier New", Courier, monospace;
-  line-height:1.6;
+}
+
+.title-center{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%, -50%);
+  text-align:center;
+  width:100%;
 }
 
 .title-page .title{
@@ -182,6 +184,7 @@ button.toggle-off{background:#fff;color:#111827}
 .title-page .meta{
   font-size:14px;
   line-height:1.8;
+  text-align:center;
 }
 
 .title-page:hover{
