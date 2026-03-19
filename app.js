@@ -360,6 +360,7 @@ function deleteScene(id) {
 
 function openProjectModal(isNew = false) {
   projectDraft = clone(appState.currentScript ? appState.currentScript.project : createEmptyProject());
+  projectDraft.location = projectDraft.location || "Lima, Perú";
   projectDraft.date = formatDateToDDMMYYYY(projectDraft.date);
   document.getElementById("projectModalTitle").textContent = isNew ? "Nuevo proyecto" : "Proyecto";
 
