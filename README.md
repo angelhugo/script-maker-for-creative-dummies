@@ -39,9 +39,13 @@ Script Maker es una aplicación web que permite escribir guiones en formato prof
 
 ## 📁 Estructura del proyecto
 /project
+
 ├── index.html
+
 ├── styles.css
+
 ├── app.js
+
 ├── data.
 
 ---
